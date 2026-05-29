@@ -15,7 +15,7 @@ spec:
         # Counts successful syncs in the last 24 h, per app and project.
         - record: dora:deployment_frequency:daily
           expr: |
-            sum by (name, project) (
+            sum by (name, project, dest_namespace) (
               increase(argocd_app_sync_total{phase="Succeeded"}[24h])
             )
 
@@ -23,12 +23,12 @@ spec:
         # Ratio of failed syncs to all syncs over 7 days (0–1 scale).
         - record: dora:change_failure_rate:7d
           expr: |
-            sum by (name, project) (
+            sum by (name, project, dest_namespace) (
               increase(argocd_app_sync_total{phase="Failed"}[7d])
             )
             /
             clamp_min(
-              sum by (name, project) (
+              sum by (name, project, dest_namespace) (
                 increase(argocd_app_sync_total[7d])
               ),
               1
@@ -41,8 +41,10 @@ spec:
           expr: |
             histogram_quantile(
               0.95,
-              sum by (name, project, le) (
+              sum by (name, project, dest_namespace, le) (
                 rate(argocd_app_reconcile_bucket[1h])
+                * on(name, namespace) group_left(dest_namespace, project)
+                  max by (name, namespace, dest_namespace, project) (argocd_app_info)
               )
             )
 

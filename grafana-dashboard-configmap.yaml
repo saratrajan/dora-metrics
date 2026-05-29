@@ -10,7 +10,10 @@ data:
     {
       "title": "DORA Metrics (ArgoCD)",
       "uid": "dora-argocd",
-      "time": { "from": "now-30d", "to": "now" },
+      "time": {
+        "from": "now-30d",
+        "to": "now"
+      },
       "refresh": "5m",
       "templating": {
         "list": [
@@ -19,10 +22,21 @@ data:
             "label": "Environment",
             "type": "custom",
             "query": "lab,prod",
-            "current": { "text": "lab", "value": "lab" },
+            "current": {
+              "text": "lab",
+              "value": "lab"
+            },
             "options": [
-              { "text": "lab",  "value": "lab",  "selected": true },
-              { "text": "prod", "value": "prod", "selected": false }
+              {
+                "text": "lab",
+                "value": "lab",
+                "selected": true
+              },
+              {
+                "text": "prod",
+                "value": "prod",
+                "selected": false
+              }
             ],
             "includeAll": false,
             "multi": false
@@ -37,17 +51,32 @@ data:
             "includeAll": true,
             "multi": true,
             "allValue": ".*"
+          },
+          {
+            "name": "namespace",
+            "label": "Namespace",
+            "type": "query",
+            "datasource": "Prometheus",
+            "query": "label_values(argocd_app_info{dest_namespace=~\".*$environment.*\"}, dest_namespace)",
+            "refresh": 2,
+            "sort": 1,
+            "includeAll": true,
+            "multi": true
           }
         ]
       },
       "panels": [
-
         {
           "id": 10,
-          "title": "SLO — Deployment Frequency",
+          "title": "SLO \u2014 Deployment Frequency",
           "description": "DORA Elite: multiple deploys/day (>1). High: >1/week. Source: dora.dev",
           "type": "stat",
-          "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 },
+          "gridPos": {
+            "x": 0,
+            "y": 0,
+            "w": 6,
+            "h": 4
+          },
           "fieldConfig": {
             "defaults": {
               "unit": "none",
@@ -56,29 +85,47 @@ data:
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
-                  { "color": "red",    "value": null },
-                  { "color": "yellow", "value": 0.14 },
-                  { "color": "green",  "value": 1 }
+                  {
+                    "color": "red",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 0.14
+                  },
+                  {
+                    "color": "green",
+                    "value": 1
+                  }
                 ]
               },
-              "mappings": []
+              "mappings": [],
+              "noValue": "N/A"
             }
           },
-          "options": { "colorMode": "background", "graphMode": "none", "textMode": "value_and_name" },
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "textMode": "value_and_name"
+          },
           "targets": [
             {
-              "expr": "sum(dora:deployment_frequency:daily{project=~\"$project\", dest_namespace=~\".*$environment.*\"})",
+              "expr": "sum(dora:deployment_frequency:daily{project=~\"$project\", dest_namespace=~\"$namespace\"})",
               "legendFormat": "Deploys / day"
             }
           ]
         },
-
         {
           "id": 11,
-          "title": "SLO — Change Failure Rate",
-          "description": "DORA Elite/High: ≤5%. Medium: ≤15%. Low: >15%. Source: dora.dev",
+          "title": "SLO \u2014 Change Failure Rate",
+          "description": "DORA Elite/High: \u22645%. Medium: \u226415%. Low: >15%. Source: dora.dev",
           "type": "stat",
-          "gridPos": { "x": 6, "y": 0, "w": 6, "h": 4 },
+          "gridPos": {
+            "x": 6,
+            "y": 0,
+            "w": 6,
+            "h": 4
+          },
           "fieldConfig": {
             "defaults": {
               "unit": "percentunit",
@@ -87,29 +134,47 @@ data:
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
-                  { "color": "green",  "value": null },
-                  { "color": "yellow", "value": 0.05 },
-                  { "color": "red",    "value": 0.15 }
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 0.05
+                  },
+                  {
+                    "color": "red",
+                    "value": 0.15
+                  }
                 ]
               },
-              "mappings": []
+              "mappings": [],
+              "noValue": "N/A"
             }
           },
-          "options": { "colorMode": "background", "graphMode": "none", "textMode": "value_and_name" },
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "textMode": "value_and_name"
+          },
           "targets": [
             {
-              "expr": "sum(dora:change_failure_rate:7d{project=~\"$project\", dest_namespace=~\".*$environment.*\"}) / count(dora:change_failure_rate:7d{project=~\"$project\", dest_namespace=~\".*$environment.*\"})",
+              "expr": "sum(dora:change_failure_rate:7d{project=~\"$project\", dest_namespace=~\"$namespace\"}) / count(dora:change_failure_rate:7d{project=~\"$project\", dest_namespace=~\"$namespace\"})",
               "legendFormat": "Failure rate (7d)"
             }
           ]
         },
-
         {
           "id": 12,
-          "title": "SLO — Lead Time (proxy)",
-          "description": "DORA Elite: <1h. High: <1d. Proxy only — based on reconcile P95, not commit timestamps.",
+          "title": "SLO \u2014 Lead Time (proxy)",
+          "description": "DORA Elite: <1h. High: <1d. Proxy only \u2014 based on reconcile P95, not commit timestamps.",
           "type": "stat",
-          "gridPos": { "x": 12, "y": 0, "w": 6, "h": 4 },
+          "gridPos": {
+            "x": 12,
+            "y": 0,
+            "w": 6,
+            "h": 4
+          },
           "fieldConfig": {
             "defaults": {
               "unit": "s",
@@ -118,29 +183,47 @@ data:
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
-                  { "color": "green",  "value": null },
-                  { "color": "yellow", "value": 3600 },
-                  { "color": "red",    "value": 86400 }
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 3600
+                  },
+                  {
+                    "color": "red",
+                    "value": 86400
+                  }
                 ]
               },
-              "mappings": []
+              "mappings": [],
+              "noValue": "N/A"
             }
           },
-          "options": { "colorMode": "background", "graphMode": "none", "textMode": "value_and_name" },
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "textMode": "value_and_name"
+          },
           "targets": [
             {
-              "expr": "avg(dora:lead_time_p95:1h{project=~\"$project\", dest_namespace=~\".*$environment.*\"})",
+              "expr": "avg(dora:lead_time_p95:1h{project=~\"$project\", dest_namespace=~\"$namespace\"})",
               "legendFormat": "Reconcile P95"
             }
           ]
         },
-
         {
           "id": 13,
-          "title": "SLO — App Health",
+          "title": "SLO \u2014 App Health",
           "description": "Percentage of apps currently in Healthy state.",
           "type": "stat",
-          "gridPos": { "x": 18, "y": 0, "w": 6, "h": 4 },
+          "gridPos": {
+            "x": 18,
+            "y": 0,
+            "w": 6,
+            "h": 4
+          },
           "fieldConfig": {
             "defaults": {
               "unit": "percentunit",
@@ -149,145 +232,262 @@ data:
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
-                  { "color": "red",    "value": null },
-                  { "color": "yellow", "value": 0.8 },
-                  { "color": "green",  "value": 0.95 }
+                  {
+                    "color": "red",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 0.8
+                  },
+                  {
+                    "color": "green",
+                    "value": 0.95
+                  }
                 ]
               },
-              "mappings": []
+              "mappings": [],
+              "noValue": "N/A"
             }
           },
-          "options": { "colorMode": "background", "graphMode": "none", "textMode": "value_and_name" },
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "textMode": "value_and_name"
+          },
           "targets": [
             {
-              "expr": "sum(argocd_app_info{health_status=\"Healthy\", project=~\"$project\", dest_namespace=~\".*$environment.*\"}) / sum(argocd_app_info{project=~\"$project\", dest_namespace=~\".*$environment.*\"})",
+              "expr": "sum(argocd_app_info{health_status=\"Healthy\", project=~\"$project\", dest_namespace=~\"$namespace\"}) / sum(argocd_app_info{project=~\"$project\", dest_namespace=~\"$namespace\"})",
               "legendFormat": "Healthy apps"
             }
           ]
         },
-
         {
           "id": 1,
-          "title": "Deployment Frequency — $environment",
+          "title": "Deployment Frequency",
           "type": "timeseries",
-          "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 },
+          "gridPos": {
+            "x": 0,
+            "y": 4,
+            "w": 12,
+            "h": 8
+          },
           "fieldConfig": {
-            "defaults": { "custom": { "lineWidth": 2 } },
+            "defaults": {
+              "custom": {
+                "lineWidth": 2
+              }
+            },
             "overrides": [
               {
-                "matcher": { "id": "byNamePattern", "options": "30d avg" },
+                "matcher": {
+                  "id": "byNamePattern",
+                  "options": "30d avg"
+                },
                 "properties": [
-                  { "id": "custom.lineStyle", "value": { "dash": [6, 4], "fill": "dash" } },
-                  { "id": "custom.lineWidth", "value": 1 },
-                  { "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }
+                  {
+                    "id": "custom.lineStyle",
+                    "value": {
+                      "dash": [
+                        6,
+                        4
+                      ],
+                      "fill": "dash"
+                    }
+                  },
+                  {
+                    "id": "custom.lineWidth",
+                    "value": 1
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "orange",
+                      "mode": "fixed"
+                    }
+                  }
                 ]
               }
             ]
           },
           "targets": [
             {
-              "expr": "sum(dora:deployment_frequency:daily{project=~\"$project\", dest_namespace=~\".*$environment.*\"})",
+              "expr": "sum(dora:deployment_frequency:daily{project=~\"$project\", dest_namespace=~\"$namespace\"})",
               "legendFormat": "Deploys / day"
             },
             {
-              "expr": "avg_over_time(sum(dora:deployment_frequency:daily{project=~\"$project\", dest_namespace=~\".*$environment.*\"})[30d:1d])",
+              "expr": "avg_over_time(sum(dora:deployment_frequency:daily{project=~\"$project\", dest_namespace=~\"$namespace\"})[30d:1d])",
               "legendFormat": "30d avg"
             }
           ]
         },
-
         {
           "id": 2,
-          "title": "Change Failure Rate — $environment",
+          "title": "Change Failure Rate",
           "type": "timeseries",
-          "gridPos": { "x": 12, "y": 4, "w": 12, "h": 8 },
+          "gridPos": {
+            "x": 12,
+            "y": 4,
+            "w": 12,
+            "h": 8
+          },
           "fieldConfig": {
             "defaults": {
               "unit": "percentunit",
-              "custom": { "lineWidth": 2 },
+              "custom": {
+                "lineWidth": 2
+              },
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
-                  { "color": "green",  "value": null },
-                  { "color": "yellow", "value": 0.05 },
-                  { "color": "red",    "value": 0.15 }
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 0.05
+                  },
+                  {
+                    "color": "red",
+                    "value": 0.15
+                  }
                 ]
               }
             },
             "overrides": [
               {
-                "matcher": { "id": "byNamePattern", "options": "30d avg" },
+                "matcher": {
+                  "id": "byNamePattern",
+                  "options": "30d avg"
+                },
                 "properties": [
-                  { "id": "custom.lineStyle", "value": { "dash": [6, 4], "fill": "dash" } },
-                  { "id": "custom.lineWidth", "value": 1 },
-                  { "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }
+                  {
+                    "id": "custom.lineStyle",
+                    "value": {
+                      "dash": [
+                        6,
+                        4
+                      ],
+                      "fill": "dash"
+                    }
+                  },
+                  {
+                    "id": "custom.lineWidth",
+                    "value": 1
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "orange",
+                      "mode": "fixed"
+                    }
+                  }
                 ]
               }
             ]
           },
           "targets": [
             {
-              "expr": "sum(dora:change_failure_rate:7d{project=~\"$project\", dest_namespace=~\".*$environment.*\"}) / count(dora:change_failure_rate:7d{project=~\"$project\", dest_namespace=~\".*$environment.*\"})",
+              "expr": "sum(dora:change_failure_rate:7d{project=~\"$project\", dest_namespace=~\"$namespace\"}) / count(dora:change_failure_rate:7d{project=~\"$project\", dest_namespace=~\"$namespace\"})",
               "legendFormat": "Failure rate"
             },
             {
-              "expr": "avg_over_time((sum(dora:change_failure_rate:7d{project=~\"$project\", dest_namespace=~\".*$environment.*\"}) / count(dora:change_failure_rate:7d{project=~\"$project\", dest_namespace=~\".*$environment.*\"}))[30d:1d])",
+              "expr": "avg_over_time((sum(dora:change_failure_rate:7d{project=~\"$project\", dest_namespace=~\"$namespace\"}) / count(dora:change_failure_rate:7d{project=~\"$project\", dest_namespace=~\"$namespace\"}))[30d:1d])",
               "legendFormat": "30d avg"
             }
           ]
         },
-
         {
           "id": 3,
-          "title": "Lead Time Proxy — $environment (Reconcile P95)",
+          "title": "Lead Time Proxy (Reconcile P95)",
           "type": "timeseries",
-          "gridPos": { "x": 0, "y": 12, "w": 12, "h": 8 },
+          "gridPos": {
+            "x": 0,
+            "y": 12,
+            "w": 12,
+            "h": 8
+          },
           "fieldConfig": {
-            "defaults": { "unit": "s", "custom": { "lineWidth": 2 } },
+            "defaults": {
+              "unit": "s",
+              "custom": {
+                "lineWidth": 2
+              }
+            },
             "overrides": [
               {
-                "matcher": { "id": "byNamePattern", "options": "30d avg" },
+                "matcher": {
+                  "id": "byNamePattern",
+                  "options": "30d avg"
+                },
                 "properties": [
-                  { "id": "custom.lineStyle", "value": { "dash": [6, 4], "fill": "dash" } },
-                  { "id": "custom.lineWidth", "value": 1 },
-                  { "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }
+                  {
+                    "id": "custom.lineStyle",
+                    "value": {
+                      "dash": [
+                        6,
+                        4
+                      ],
+                      "fill": "dash"
+                    }
+                  },
+                  {
+                    "id": "custom.lineWidth",
+                    "value": 1
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "orange",
+                      "mode": "fixed"
+                    }
+                  }
                 ]
               }
             ]
           },
           "targets": [
             {
-              "expr": "dora:lead_time_p95:1h{project=~\"$project\", dest_namespace=~\".*$environment.*\"}",
+              "expr": "dora:lead_time_p95:1h{project=~\"$project\", dest_namespace=~\"$namespace\"}",
               "legendFormat": "{{project}}/{{name}}"
             },
             {
-              "expr": "avg_over_time(avg(dora:lead_time_p95:1h{project=~\"$project\", dest_namespace=~\".*$environment.*\"})[30d:1h])",
+              "expr": "avg_over_time(avg(dora:lead_time_p95:1h{project=~\"$project\", dest_namespace=~\"$namespace\"})[30d:1h])",
               "legendFormat": "30d avg"
             }
           ]
         },
-
         {
           "id": 4,
-          "title": "App Health — $environment",
+          "title": "App Health",
           "type": "piechart",
-          "gridPos": { "x": 12, "y": 12, "w": 12, "h": 8 },
+          "gridPos": {
+            "x": 12,
+            "y": 12,
+            "w": 12,
+            "h": 8
+          },
           "targets": [
             {
-              "expr": "sum by (health_status) (argocd_app_info{project=~\"$project\", dest_namespace=~\".*$environment.*\"})",
+              "expr": "sum by (health_status) (argocd_app_info{project=~\"$project\", dest_namespace=~\"$namespace\"})",
               "legendFormat": "{{health_status}}"
             }
           ]
         },
-
         {
           "id": 5,
-          "title": "Unhealthy Applications — $environment",
+          "title": "Unhealthy Applications",
           "type": "table",
-          "gridPos": { "x": 0, "y": 20, "w": 24, "h": 8 },
+          "gridPos": {
+            "x": 0,
+            "y": 20,
+            "w": 24,
+            "h": 8
+          },
           "targets": [
             {
-              "expr": "argocd_app_info{health_status!=\"Healthy\", project=~\"$project\", dest_namespace=~\".*$environment.*\"}",
+              "expr": "argocd_app_info{health_status!=\"Healthy\", project=~\"$project\", dest_namespace=~\"$namespace\"}",
               "legendFormat": "",
               "instant": true,
               "format": "table"
@@ -297,11 +497,19 @@ data:
             {
               "id": "filterFieldsByName",
               "options": {
-                "include": { "names": ["name", "project", "health_status", "sync_status", "dest_namespace", "dest_server"] }
+                "include": {
+                  "names": [
+                    "name",
+                    "project",
+                    "health_status",
+                    "sync_status",
+                    "dest_namespace",
+                    "dest_server"
+                  ]
+                }
               }
             }
           ]
         }
-
       ]
     }

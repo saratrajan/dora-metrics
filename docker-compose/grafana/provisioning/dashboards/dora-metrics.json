@@ -273,7 +273,7 @@
     },
     {
       "id": 1,
-      "title": "Deployment Frequency \u2014 ${environment} (deploys/day equivalent)",
+      "title": "Deployment Frequency (deploys/day equivalent)",
       "type": "timeseries",
       "gridPos": {
         "x": 0,
@@ -340,7 +340,7 @@
     },
     {
       "id": 2,
-      "title": "Change Failure Rate \u2014 ${environment}",
+      "title": "Change Failure Rate",
       "type": "timeseries",
       "gridPos": {
         "x": 12,
@@ -408,7 +408,7 @@
     },
     {
       "id": 3,
-      "title": "Lead Time Proxy \u2014 ${environment} (Reconcile P95)",
+      "title": "Lead Time Proxy (Reconcile P95)",
       "type": "timeseries",
       "gridPos": {
         "x": 0,
@@ -476,7 +476,7 @@
     },
     {
       "id": 4,
-      "title": "App Health \u2014 ${environment}",
+      "title": "App Health",
       "type": "piechart",
       "gridPos": {
         "x": 12,
@@ -497,7 +497,7 @@
     },
     {
       "id": 5,
-      "title": "All Services \u2014 ${environment}",
+      "title": "All Services",
       "type": "table",
       "gridPos": {
         "x": 0,
