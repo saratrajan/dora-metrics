@@ -15,17 +15,17 @@ from prometheus_client.core import CounterMetricFamily, GaugeMetricFamily, Histo
 # Each entry: (name, dest_namespace, syncs_succeeded_per_hr, syncs_failed_per_hr, health)
 # ---------------------------------------------------------------------------
 SERVICES = [
-    # name                   dest_namespace   succ/hr  fail/hr  health
-    ("search-service",       "travel-lab",    4.0,     0.2,     "Healthy"),
-    ("search-service",       "travel-prod",   1.0,     0.02,    "Healthy"),
-    ("booking-manager",      "travel-lab",    3.0,     0.3,     "Healthy"),
-    ("booking-manager",      "travel-prod",   1.2,     0.06,    "Healthy"),
-    ("payment-gateway",      "travel-lab",    2.0,     0.5,     "Degraded"),   # flaky in lab
-    ("payment-gateway",      "travel-prod",   0.5,     0.02,    "Healthy"),
-    ("inventory-service",    "travel-lab",    2.5,     0.15,    "Healthy"),
-    ("inventory-service",    "travel-prod",   0.8,     0.04,    "Healthy"),
-    ("notification-service", "travel-lab",    1.5,     0.35,    "Progressing"),
-    ("notification-service", "travel-prod",   0.3,     0.0,     "Healthy"),
+    # name                   dest_namespace              succ/hr  fail/hr  health
+    ("search-service",       "search-service-lab",       4.0,     0.2,     "Healthy"),
+    ("search-service",       "search-service-prod",      1.0,     0.02,    "Healthy"),
+    ("booking-manager",      "booking-manager-lab",      3.0,     0.3,     "Healthy"),
+    ("booking-manager",      "booking-manager-prod",     1.2,     0.06,    "Healthy"),
+    ("payment-gateway",      "payment-gateway-lab",      2.0,     0.5,     "Degraded"),   # flaky in lab
+    ("payment-gateway",      "payment-gateway-prod",     0.5,     0.02,    "Healthy"),
+    ("inventory-service",    "inventory-service-lab",    2.5,     0.15,    "Healthy"),
+    ("inventory-service",    "inventory-service-prod",   0.8,     0.04,    "Healthy"),
+    ("notification-service", "notification-service-lab", 1.5,     0.35,    "Progressing"),
+    ("notification-service", "notification-service-prod",0.3,     0.0,     "Healthy"),
 ]
 
 PROJECT      = "travel-platform"
