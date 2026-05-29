@@ -145,3 +145,9 @@ ArgoCD will keep all manifests in sync with this repo automatically.
 ## Dashboard — Environment variable
 
 The dashboard `$environment` variable defaults to `lab`. All six panels filter ArgoCD metrics by `dest_namespace=~".*$environment.*"` — meaning your ArgoCD app destination namespaces should contain the string `lab` or `prod` (e.g. `app-lab`, `payments-prod`). Adjust the regex in the dashboard JSON if your naming convention differs.
+
+---
+
+## Reference
+
+- [ArgoCD Operator Manual — Metrics](https://argo-cd.readthedocs.io/en/latest/operator-manual/metrics/) — full list of available ArgoCD Prometheus metrics. Use this to extend the recording rules in `prometheusrule.yaml` or add panels to the Grafana dashboard as needed.
