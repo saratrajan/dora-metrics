@@ -1,0 +1,159 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dora-metrics-dashboard
+  namespace: monitoring       # namespace where Grafana runs
+  labels:
+    grafana_dashboard: "1"   # matches Grafana's sidecar label (kube-prometheus-stack default)
+data:
+  dora-metrics.json: |
+    {
+      "title": "DORA Metrics (ArgoCD)",
+      "uid": "dora-argocd",
+      "time": { "from": "now-7d", "to": "now" },
+      "refresh": "5m",
+      "templating": {
+        "list": [
+          {
+            "name": "environment",
+            "label": "Environment",
+            "type": "custom",
+            "query": "lab,prod",
+            "current": { "text": "lab", "value": "lab" },
+            "options": [
+              { "text": "lab",  "value": "lab",  "selected": true },
+              { "text": "prod", "value": "prod", "selected": false }
+            ],
+            "includeAll": false,
+            "multi": false
+          },
+          {
+            "name": "project",
+            "label": "ArgoCD Project",
+            "type": "query",
+            "datasource": "Prometheus",
+            "query": "label_values(argocd_app_info{dest_namespace=~\".*$environment.*\"}, project)",
+            "refresh": 2,
+            "includeAll": true,
+            "multi": true,
+            "allValue": ".*"
+          }
+        ]
+      },
+      "panels": [
+        {
+          "id": 1,
+          "title": "Deployment Frequency — $environment (successful syncs / 24 h)",
+          "type": "timeseries",
+          "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+          "targets": [
+            {
+              "expr": "sum(dora:deployment_frequency:daily{project=~\"$project\", dest_namespace=~\".*$environment.*\"})",
+              "legendFormat": "Total — $environment"
+            },
+            {
+              "expr": "dora:deployment_frequency:daily{project=~\"$project\", dest_namespace=~\".*$environment.*\"}",
+              "legendFormat": "{{project}}/{{name}}"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Change Failure Rate — $environment (7-day rolling)",
+          "type": "timeseries",
+          "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green",  "value": null },
+                  { "color": "yellow", "value": 0.05 },
+                  { "color": "red",    "value": 0.15 }
+                ]
+              }
+            }
+          },
+          "targets": [
+            {
+              "expr": "dora:change_failure_rate:7d{project=~\"$project\", dest_namespace=~\".*$environment.*\"}",
+              "legendFormat": "{{project}}/{{name}}"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Lead Time Proxy — $environment (Reconcile P95, seconds)",
+          "type": "timeseries",
+          "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 },
+          "fieldConfig": { "defaults": { "unit": "s" } },
+          "targets": [
+            {
+              "expr": "dora:lead_time_p95:1h{project=~\"$project\", dest_namespace=~\".*$environment.*\"}",
+              "legendFormat": "{{project}}/{{name}}"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "title": "App Health — $environment",
+          "type": "piechart",
+          "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 },
+          "targets": [
+            {
+              "expr": "sum by (health_status) (argocd_app_info{project=~\"$project\", dest_namespace=~\".*$environment.*\"})",
+              "legendFormat": "{{health_status}}"
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "title": "Unhealthy Applications — $environment",
+          "type": "table",
+          "gridPos": { "x": 0, "y": 16, "w": 24, "h": 8 },
+          "targets": [
+            {
+              "expr": "argocd_app_info{health_status!=\"Healthy\", project=~\"$project\", dest_namespace=~\".*$environment.*\"}",
+              "legendFormat": "",
+              "instant": true,
+              "format": "table"
+            }
+          ],
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": { "names": ["name", "project", "health_status", "sync_status", "dest_namespace", "dest_server"] }
+              }
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "title": "Overall Failure Rate — $environment",
+          "type": "stat",
+          "gridPos": { "x": 0, "y": 24, "w": 8, "h": 4 },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green",  "value": null },
+                  { "color": "yellow", "value": 0.05 },
+                  { "color": "red",    "value": 0.15 }
+                ]
+              }
+            }
+          },
+          "options": { "colorMode": "background" },
+          "targets": [
+            {
+              "expr": "sum(dora:change_failure_rate:7d{project=~\"$project\", dest_namespace=~\".*$environment.*\"}) / count(dora:change_failure_rate:7d{project=~\"$project\", dest_namespace=~\".*$environment.*\"})",
+              "legendFormat": "Avg failure rate — $environment"
+            }
+          ]
+        }
+      ]
+    }

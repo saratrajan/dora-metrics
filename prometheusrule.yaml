@@ -1,0 +1,56 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: dora-metrics
+  namespace: argocd
+  labels:
+    release: prometheus   # must match your Prometheus Operator's ruleSelector label
+spec:
+  groups:
+    - name: dora.rules
+      interval: 1m
+      rules:
+
+        # --- Deployment Frequency ---
+        # Counts successful syncs in the last 24 h, per app and project.
+        - record: dora:deployment_frequency:daily
+          expr: |
+            sum by (name, project) (
+              increase(argocd_app_sync_total{phase="Succeeded"}[24h])
+            )
+
+        # --- Change Failure Rate ---
+        # Ratio of failed syncs to all syncs over 7 days (0–1 scale).
+        - record: dora:change_failure_rate:7d
+          expr: |
+            sum by (name, project) (
+              increase(argocd_app_sync_total{phase="Failed"}[7d])
+            )
+            /
+            clamp_min(
+              sum by (name, project) (
+                increase(argocd_app_sync_total[7d])
+              ),
+              1
+            )
+
+        # --- Lead Time Proxy ---
+        # P95 reconciliation duration is the closest proxy available without
+        # commit-timestamp data. True lead time requires enriching with git metadata.
+        - record: dora:lead_time_p95:1h
+          expr: |
+            histogram_quantile(
+              0.95,
+              sum by (name, project, le) (
+                rate(argocd_app_reconcile_bucket[1h])
+              )
+            )
+
+        # --- Mean Time to Recovery (MTTR) Proxy ---
+        # Average time for a degraded app to return to Healthy, sampled over 1 h.
+        # This is a rough signal; accurate MTTR needs incident timestamps.
+        - record: dora:mttr_proxy:1h
+          expr: |
+            avg by (name, project) (
+              argocd_app_info{health_status!="Healthy"}
+            )
