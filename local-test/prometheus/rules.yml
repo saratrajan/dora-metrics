@@ -1,0 +1,36 @@
+groups:
+  - name: dora.rules
+    interval: 15s
+    rules:
+
+      # Deployment Frequency — successful syncs in last 1h (scaled to /day for display)
+      # Using 1h window locally so trends appear within minutes rather than 24h
+      - record: dora:deployment_frequency:daily
+        expr: |
+          sum by (name, project, dest_namespace) (
+            increase(argocd_app_sync_total{phase="Succeeded"}[1h])
+          ) * 24
+
+      # Change Failure Rate — failed / total syncs over last 1h
+      - record: dora:change_failure_rate:7d
+        expr: |
+          sum by (name, project, dest_namespace) (
+            increase(argocd_app_sync_total{phase="Failed"}[1h])
+          )
+          /
+          clamp_min(
+            sum by (name, project, dest_namespace) (
+              increase(argocd_app_sync_total[1h])
+            ),
+            1
+          )
+
+      # Lead Time Proxy — reconcile P95 over last 1h
+      - record: dora:lead_time_p95:1h
+        expr: |
+          histogram_quantile(
+            0.95,
+            sum by (name, le) (
+              rate(argocd_app_reconcile_bucket[1h])
+            )
+          )
