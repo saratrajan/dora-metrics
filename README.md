@@ -4,6 +4,42 @@ Track Deployment Frequency, Change Failure Rate, Lead Time, and MTTR using your 
 
 ---
 
+## Architecture
+
+```mermaid
+flowchart LR
+    classDef argo    fill:#E8461E,stroke:#bf3615,color:#fff
+    classDef prom    fill:#E6522C,stroke:#c93f1a,color:#fff
+    classDef storage fill:#C94C1E,stroke:#a33d17,color:#fff
+    classDef grafana fill:#F5A623,stroke:#c8841a,color:#1a1a1a
+
+    subgraph AC["ArgoCD"]
+        E1([application-controller\n/metrics])
+        E2([argocd-server\n/metrics])
+        E3([repo-server\n/metrics])
+    end
+
+    subgraph PR["Prometheus"]
+        S[(Time Series\nStore)]
+        R[/DORA\nRecording Rules/]
+    end
+
+    subgraph GR["Grafana"]
+        D[DORA Dashboard\nLab · Prod]
+    end
+
+    E1 & E2 & E3 -->|scrape every 30s| S
+    S -->|evaluate every 1m| R
+    R -->|PromQL| D
+
+    class E1,E2,E3 argo
+    class R prom
+    class S storage
+    class D grafana
+```
+
+---
+
 ## Files
 
 | File | What it does |
