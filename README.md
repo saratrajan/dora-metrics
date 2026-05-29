@@ -40,6 +40,61 @@ flowchart LR
 
 ---
 
+## Local testing with Docker Compose
+
+The `docker-compose/` directory spins up a self-contained stack — no Kubernetes or real ArgoCD required. It is useful for developing and testing the dashboard locally before applying anything to a cluster.
+
+### What runs
+
+| Service | Port | Endpoint | Description |
+|---------|------|----------|-------------|
+| `mock-exporter` | 8000 | `http://localhost:8000/metrics` | Python service that emits realistic ArgoCD-compatible Prometheus metrics for five travel-platform microservices |
+| `prometheus` | 9090 | `http://localhost:9090` | Scrapes the mock exporter and evaluates the DORA recording rules every 15s |
+| `grafana` | 3000 | `http://localhost:3000` | Loads the DORA dashboard automatically via provisioning |
+
+The mock exporter simulates five services each in their own lab and prod namespaces (e.g. `search-service-lab`, `search-service-prod`) and seeds 24 hours of history so `increase()` queries return meaningful values from the very first scrape.
+
+### Running the stack
+
+```bash
+cd docker-compose
+sudo docker-compose up --build
+```
+
+Grafana is available at `http://localhost:3000` (credentials: `admin` / `admin`).
+
+Once running, you can verify the mock exporter is serving metrics:
+
+```bash
+curl http://localhost:8000/metrics | grep argocd_app_sync_total
+```
+
+Expected output — one line per service/namespace/phase combination:
+
+```
+argocd_app_sync_total{dest_namespace="search-service-lab",...,phase="Succeeded"} 96.0
+argocd_app_sync_total{dest_namespace="search-service-lab",...,phase="Failed"} 4.0
+...
+```
+
+To stop and clean up:
+
+```bash
+sudo docker-compose down
+```
+
+### docker-compose files
+
+| File | What it does |
+|------|-------------|
+| `docker-compose.yml` | Defines the three-service stack |
+| `mock-exporter/exporter.py` | Mock ArgoCD Prometheus exporter — edit `SERVICES` here to change simulated services, rates, or health states |
+| `prometheus/prometheus.yml` | Scrape config pointing at the mock exporter |
+| `prometheus/rules.yml` | Same DORA recording rules used in production (`prometheusrule.yaml`), adapted for the local stack |
+| `grafana/provisioning/` | Auto-provisions the Prometheus datasource and the DORA dashboard on startup |
+
+---
+
 ## Files
 
 | File | What it does |
