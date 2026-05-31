@@ -251,7 +251,7 @@ _syncs_since_bump: dict[str, int] = {name: 0 for name in _live_version}
 # ---------------------------------------------------------------------------
 # Internal state
 #   sync_state:      {(name, dest_ns): {"succeeded": float, "failed": float}}
-#   reconcile_state: {(name, version_str): {"sum", "count", "raw"}}
+#   reconcile_state: {(name, dest_ns, version_str): {"sum", "count", "raw"}}
 # ---------------------------------------------------------------------------
 sync_state:      dict = {}
 reconcile_state: dict = {}
@@ -285,11 +285,11 @@ def _poisson(lam: float) -> int:
             return k - 1
 
 
-def _record_reconcile(name: str, version: str, n: int) -> None:
-    """Add n reconcile observations to the (name, version) bucket."""
+def _record_reconcile(name: str, dest_ns: str, version: str, n: int) -> None:
+    """Add n reconcile observations to the (name, dest_ns, version) bucket."""
     if n <= 0:
         return
-    key = (name, version)
+    key = (name, dest_ns, version)
     if key not in reconcile_state:
         reconcile_state[key] = {"sum": 0.0, "count": 0, "raw": {le: 0 for le in BUCKETS}}
     mean_s = _mean_s(name, version)
@@ -322,8 +322,7 @@ def _init() -> None:
         seed_succ = int(succ_hr * 24 * seed_days)
         seed_fail = int(fail_hr * 24 * seed_days)
         sync_state[key] = {"succeeded": float(seed_succ), "failed": float(seed_fail)}
-        if (name, _ver(name)) not in reconcile_state:
-            _record_reconcile(name, _ver(name), seed_succ + seed_fail)
+        _record_reconcile(name, dest_ns, _ver(name), seed_succ + seed_fail)
 
 
 _init()
@@ -349,7 +348,7 @@ def _increment() -> None:
                 continue
 
             version = _ver(name)
-            _record_reconcile(name, version, n_succ + n_fail)
+            _record_reconcile(name, dest_ns, version, n_succ + n_fail)
 
             # Bump version when enough syncs have accumulated
             _syncs_since_bump[name] += n_succ
@@ -394,19 +393,19 @@ class ArgoMockCollector:
             )
         yield info
 
-        # argocd_app_reconcile — one histogram per (service, version)
-        for (name, version), rs in list(reconcile_state.items()):
+        # argocd_app_reconcile — one histogram per (service, dest_namespace, version)
+        for (name, dest_ns, version), rs in list(reconcile_state.items()):
             h = HistogramMetricFamily(
                 "argocd_app_reconcile",
                 "ArgoCD app reconcile duration (mock)",
-                labels=["name", "namespace", "app_version"],
+                labels=["name", "namespace", "dest_namespace", "app_version"],
             )
             cum, bucket_list = 0, []
             for le in BUCKETS:
                 cum += rs["raw"][le]
                 bucket_list.append((str(le), cum))
             bucket_list.append(("+Inf", rs["count"]))
-            h.add_metric([name, ARGOCD_NS, version], buckets=bucket_list, sum_value=rs["sum"])
+            h.add_metric([name, ARGOCD_NS, dest_ns, version], buckets=bucket_list, sum_value=rs["sum"])
             yield h
 
 

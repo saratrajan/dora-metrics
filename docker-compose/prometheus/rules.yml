@@ -27,14 +27,13 @@ groups:
             1
           )
 
-      # Lead Time Proxy — reconcile P95 over last 1h, joined with app_info to get dest_namespace
+      # Lead Time Proxy — reconcile P95 over last 1h
+      # dest_namespace is emitted directly by the exporter — no join needed
       - record: dora:lead_time_p95:1h
         expr: |
           histogram_quantile(
             0.95,
-            sum by (name, dest_namespace, le) (
+            sum by (name, project, dest_namespace, le) (
               rate(argocd_app_reconcile_bucket[1h])
-              * on(name, namespace) group_left(dest_namespace)
-                max by (name, namespace, dest_namespace) (argocd_app_info)
             )
           )

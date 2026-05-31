@@ -214,7 +214,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "avg(dora:lead_time_p95:1h{dest_namespace=~\"$namespace\"})",
+          "expr": "avg(dora:lead_time_p95:1h{dest_namespace=~\"$namespace\"} > 0)",
           "legendFormat": "Reconcile P95"
         }
       ]
