@@ -3,13 +3,15 @@ groups:
     interval: 15s
     rules:
 
-      # Deployment Frequency — successful syncs in last 1h (scaled to /day for display)
-      # Using 1h window locally so trends appear within minutes rather than 24h
+      # Deployment Frequency — successful syncs in last 1h
+      # NOTE: local-only rule. No *24 extrapolation — counters are only minutes old
+      # so scaling to /day produces garbage. Shows honest deploys/hr instead.
+      # Production rule (prometheusrule.yaml) uses [24h] window with no scaling.
       - record: dora:deployment_frequency:daily
         expr: |
           sum by (name, project, dest_namespace) (
             increase(argocd_app_sync_total{phase="Succeeded"}[1h])
-          ) * 24
+          )
 
       # Change Failure Rate — failed / total syncs over last 1h
       - record: dora:change_failure_rate:7d

@@ -78,7 +78,7 @@
         "defaults": {
           "unit": "none",
           "decimals": 1,
-          "displayName": "Deploys / day",
+          "displayName": "Deploys / hr",
           "thresholds": {
             "mode": "absolute",
             "steps": [
