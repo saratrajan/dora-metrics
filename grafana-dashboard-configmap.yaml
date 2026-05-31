@@ -468,6 +468,22 @@ data:
             "w": 12,
             "h": 8
           },
+          "fieldConfig": {
+            "overrides": [
+              {
+                "matcher": { "id": "byName", "options": "Healthy" },
+                "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "green" } }]
+              },
+              {
+                "matcher": { "id": "byName", "options": "Progressing" },
+                "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "yellow" } }]
+              },
+              {
+                "matcher": { "id": "byName", "options": "Degraded" },
+                "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "rgb(255, 166, 176)" } }]
+              }
+            ]
+          },
           "targets": [
             {
               "expr": "sum by (health_status) (argocd_app_info{project=~\"$project\", dest_namespace=~\"$namespace\"})",
