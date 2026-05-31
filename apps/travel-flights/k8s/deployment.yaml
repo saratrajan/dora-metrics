@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: travel-flights
+  namespace: travel-lab
+  labels:
+    app: travel-flights
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: travel-flights
+  template:
+    metadata:
+      labels:
+        app: travel-flights
+    spec:
+      containers:
+        - name: travel-flights
+          image: travel-flights:v1.0.0
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 9080
+          env:
+            - name: PORT
+              value: "9080"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 9080
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 9080
+            initialDelaySeconds: 5
+            periodSeconds: 15

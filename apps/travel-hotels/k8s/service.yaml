@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: travel-hotels
+  namespace: travel-lab
+  labels:
+    app: travel-hotels
+spec:
+  selector:
+    app: travel-hotels
+  ports:
+    - name: http
+      port: 80
+      targetPort: 9081
+  type: ClusterIP

@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: travel-hotels
+  namespace: travel-lab
+  labels:
+    app: travel-hotels
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: travel-hotels
+  template:
+    metadata:
+      labels:
+        app: travel-hotels
+    spec:
+      containers:
+        - name: travel-hotels
+          image: travel-hotels:v1.0.0
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 9081
+          env:
+            - name: PORT
+              value: "9081"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 9081
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 9081
+            initialDelaySeconds: 5
+            periodSeconds: 15
