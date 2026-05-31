@@ -290,8 +290,8 @@
         "overrides": [
           {
             "matcher": {
-              "id": "byNamePattern",
-              "options": "30d avg"
+              "id": "byRegexp",
+              "options": "/30d avg/"
             },
             "properties": [
               {
@@ -358,8 +358,8 @@
         "overrides": [
           {
             "matcher": {
-              "id": "byNamePattern",
-              "options": "30d avg"
+              "id": "byRegexp",
+              "options": "/30d avg/"
             },
             "properties": [
               {
@@ -426,8 +426,8 @@
         "overrides": [
           {
             "matcher": {
-              "id": "byNamePattern",
-              "options": "30d avg"
+              "id": "byRegexp",
+              "options": "/30d avg/"
             },
             "properties": [
               {
