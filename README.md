@@ -40,6 +40,12 @@ flowchart LR
 
 ---
 
+## Dashboard preview
+
+![DORA Metrics Dashboard](docs/images/dashboard-view.jpg)
+
+---
+
 ## Local testing with Docker Compose
 
 The `docker-compose/` directory spins up a self-contained stack — no Kubernetes or real ArgoCD required. It is useful for developing and testing the dashboard locally before applying anything to a cluster.
@@ -52,7 +58,7 @@ The `docker-compose/` directory spins up a self-contained stack — no Kubernete
 | `prometheus` | 9090 | `http://localhost:9090` | Scrapes the mock exporter and evaluates the DORA recording rules every 15s |
 | `grafana` | 3000 | `http://localhost:3000` | Loads the DORA dashboard automatically via provisioning |
 
-The mock exporter simulates five services each in their own lab and prod namespaces (e.g. `search-service-lab`, `search-service-prod`) and seeds 24 hours of history so `increase()` queries return meaningful values from the very first scrape.
+The mock exporter simulates **31 travel-platform microservices** (flights, hotels, cruise, car rental, payments, and more) each in their own lab and prod namespace (e.g. `flight-search-lab`, `flight-search-prod`). Counters are pre-seeded with months of history (20–365 days depending on service maturity) so `increase()` queries return meaningful values from the very first scrape.
 
 ### Running the stack
 
@@ -72,8 +78,9 @@ curl http://localhost:8000/metrics | grep argocd_app_sync_total
 Expected output — one line per service/namespace/phase combination:
 
 ```
-argocd_app_sync_total{dest_namespace="search-service-lab",...,phase="Succeeded"} 96.0
-argocd_app_sync_total{dest_namespace="search-service-lab",...,phase="Failed"} 4.0
+argocd_app_sync_total{dest_namespace="flight-search-lab",...,phase="Succeeded"} 25920.0
+argocd_app_sync_total{dest_namespace="flight-search-lab",...,phase="Failed"} 1296.0
+argocd_app_sync_total{dest_namespace="flight-search-prod",...,phase="Succeeded"} 10800.0
 ...
 ```
 
@@ -90,7 +97,7 @@ sudo docker-compose down
 | `docker-compose.yml` | Defines the three-service stack |
 | `mock-exporter/exporter.py` | Mock ArgoCD Prometheus exporter — edit `SERVICES` here to change simulated services, rates, or health states |
 | `prometheus/prometheus.yml` | Scrape config pointing at the mock exporter |
-| `prometheus/rules.yml` | Same DORA recording rules used in production (`prometheusrule.yaml`), adapted for the local stack |
+| `prometheus/rules.yml` | DORA recording rules adapted for local use — uses `[1h]` windows (vs `[24h]` in production) for faster feedback; no `×24` scaling so values show deploys/hr |
 | `grafana/provisioning/` | Auto-provisions the Prometheus datasource and the DORA dashboard on startup |
 
 ---
@@ -103,6 +110,7 @@ sudo docker-compose down
 | `prometheusrule.yaml` | Pre-computes DORA recording rules every 1 min from raw ArgoCD metrics |
 | `grafana-dashboard-configmap.yaml` | Grafana dashboard with an `Environment` dropdown (lab / prod) — auto-loaded by the Grafana sidecar |
 | `argocd-application.yaml` | ArgoCD Application that manages all the above via GitOps (optional — see below) |
+| `context/dora-metrics.md` | Session context — design decisions, known issues, architecture notes. Start here when resuming work in a new session |
 
 ---
 
