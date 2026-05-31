@@ -34,7 +34,8 @@ dora-metrics/
 ├── grafana-dashboard-configmap.yaml# K8s: Grafana dashboard as ConfigMap
 ├── argocd-application.yaml         # K8s: GitOps self-management (optional)
 ├── README.md                       # User-facing docs
-├── dora-metrics.md                 # ← this file
+├── context/
+│   └── dora-metrics.md             # ← this file (session context, decisions, known issues)
 └── docker-compose/
     ├── docker-compose.yml          # Wires up mock-exporter, Prometheus, Grafana
     ├── mock-exporter/
@@ -177,8 +178,13 @@ appear "stuck". Titles are now static descriptive strings.
 
 | File | Used by | Differences |
 |------|---------|-------------|
-| `docker-compose/grafana/provisioning/dashboards/dora-metrics.json` | Docker Compose | `uid: prometheus` datasource, 1h time windows, "All Services" table panel |
-| `grafana-dashboard-configmap.yaml` (embedded JSON) | Kubernetes | `"Prometheus"` datasource name, 30d time windows, "Unhealthy Applications" table panel, `project` filter in queries |
+| `docker-compose/grafana/provisioning/dashboards/dora-metrics.json` | Docker Compose | `uid: prometheus` datasource, 1h time windows, `byRegexp` overrides, "All Services" table panel |
+| `grafana-dashboard-configmap.yaml` (embedded JSON) | Kubernetes | `"Prometheus"` datasource name, 30d time windows, `byNamePattern` overrides, "Unhealthy Applications" table panel, `project` filter in queries |
+
+**App Health piechart color overrides** (both files):
+- `Healthy` → `green`
+- `Progressing` → `yellow`
+- `Degraded` → `rgb(255, 166, 176)` (light red)
 
 **Recommended future fix:** Extract the ConfigMap's embedded JSON to a
 standalone `dashboards/dora-metrics.json` and use Kustomize `configMapGenerator`
@@ -300,8 +306,19 @@ colour. Fixed by the `group_left` join described above.
 
 ## Git commit style
 
-- No `Co-Authored-By` trailer — commits appear solely under Sarat Rajan
 - Natural, concise commit messages
+- **Always ask before `git push`** — never push without explicit user approval
+
+---
+
+## Versions pinned
+
+| Component | Version |
+|-----------|---------|
+| Grafana | `grafana/grafana:11.6.1` |
+| Prometheus | `prom/prometheus:v2.51.2` |
+| Mock exporter base | `python:3.12-slim` |
+| prometheus-client | `0.20.0` |
 
 ---
 
@@ -316,3 +333,16 @@ colour. Fixed by the `group_left` join described above.
   accepting that trends accumulate from stack start.
 - **MTTR panel** — `dora:mttr_proxy:1h` exists in `prometheusrule.yaml` but
   has no corresponding panel in the local dashboard yet.
+- **Lead time many-to-many (prod)** — `argocd_app_reconcile_bucket` has no
+  `dest_namespace`. Join on `(name, namespace)` can produce many-to-many if
+  the same app name exists in both lab and prod rows in `argocd_app_info`.
+  Discussed but not yet resolved — user reverted fix. Options: drop the join
+  (lose namespace filterability) or accept the error only happens in prod
+  where a real ArgoCD has separate namespaces per cluster.
+- **Low-frequency services showing 0.0** (e.g. `car-rental`) — Poisson(λ=0.008)
+  per 15s tick means ~30 min before first event. Could add a `SIM_SPEED`
+  multiplier but user reverted that approach. Currently: wait or widen time range.
+- **dest_server split** — lab and prod are separate K8s clusters
+  (`travel-lab`, `travel-prod`). Mock exporter currently uses a single
+  `DEST_SERVER` value. Splitting to two distinct URLs would differentiate
+  clusters more accurately but was reverted due to stale series.
