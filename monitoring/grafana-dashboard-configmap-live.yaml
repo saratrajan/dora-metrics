@@ -57,7 +57,7 @@ data:
             "name": "project",
             "label": "ArgoCD Project",
             "type": "query",
-            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "datasource": { "type": "prometheus", "uid": "prometheus" },
             "query": "label_values(argocd_app_info{dest_namespace=~\".*$environment.*\"}, project)",
             "refresh": 2,
             "includeAll": true,
@@ -68,7 +68,7 @@ data:
             "name": "namespace",
             "label": "Namespace",
             "type": "query",
-            "datasource": { "type": "prometheus", "uid": "${datasource}" },
+            "datasource": { "type": "prometheus", "uid": "prometheus" },
             "query": "label_values(argocd_app_info{dest_namespace=~\".*$environment.*\"}, dest_namespace)",
             "refresh": 2,
             "sort": 1,
@@ -108,7 +108,7 @@ data:
           },
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
               "expr": "sum(dora:deployment_frequency:daily{project=~\"$project\", dest_namespace=~\"$namespace\"})",
               "legendFormat": "Deploys / day"
             }
@@ -144,7 +144,7 @@ data:
           },
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
               "expr": "sum(dora:change_failure_rate:7d{project=~\"$project\", dest_namespace=~\"$namespace\"}) / count(dora:change_failure_rate:7d{project=~\"$project\", dest_namespace=~\"$namespace\"})",
               "legendFormat": "Failure rate (7d)"
             }
@@ -181,7 +181,7 @@ data:
           },
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
               "expr": "avg(dora:lead_time_p95:1h{project=~\"$project\", dest_namespace=~\"$namespace\"} > 0)",
               "legendFormat": "Reconcile P95"
             }
@@ -217,7 +217,7 @@ data:
           },
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
               "expr": "sum(argocd_app_info{health_status=\"Healthy\", project=~\"$project\", dest_namespace=~\"$namespace\"}) / sum(argocd_app_info{project=~\"$project\", dest_namespace=~\"$namespace\"})",
               "legendFormat": "Healthy apps"
             }
@@ -245,12 +245,12 @@ data:
           },
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
               "expr": "dora:deployment_frequency:daily{dest_namespace=~\"$namespace\"}",
               "legendFormat": "{{name}}"
             },
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
               "expr": "avg_over_time(sum(dora:deployment_frequency:daily{dest_namespace=~\"$namespace\"})[1h:15s])",
               "legendFormat": "30d avg"
             }
@@ -287,12 +287,12 @@ data:
           },
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
               "expr": "dora:change_failure_rate:7d{dest_namespace=~\"$namespace\"}",
               "legendFormat": "{{name}}"
             },
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
               "expr": "avg_over_time((sum(dora:change_failure_rate:7d{dest_namespace=~\"$namespace\"}) / count(dora:change_failure_rate:7d{dest_namespace=~\"$namespace\"}))[1h:15s])",
               "legendFormat": "30d avg"
             }
@@ -321,12 +321,12 @@ data:
           },
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
               "expr": "dora:lead_time_p95:1h{dest_namespace=~\"$namespace\"}",
               "legendFormat": "{{name}}"
             },
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
               "expr": "avg_over_time(avg(dora:lead_time_p95:1h{dest_namespace=~\"$namespace\"})[1h:15s])",
               "legendFormat": "30d avg"
             }
@@ -355,7 +355,7 @@ data:
           },
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
               "expr": "sum by (health_status) (argocd_app_info{project=~\"$project\", dest_namespace=~\"$namespace\"})",
               "legendFormat": "{{health_status}}"
             }
@@ -368,7 +368,7 @@ data:
           "gridPos": { "x": 0, "y": 20, "w": 24, "h": 8 },
           "targets": [
             {
-              "datasource": { "type": "prometheus", "uid": "${datasource}" },
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
               "expr": "argocd_app_info{dest_namespace=~\"$namespace\"}",
               "legendFormat": "",
               "instant": true,
