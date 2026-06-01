@@ -22,10 +22,12 @@ data:
             "label": "Data Source",
             "type": "datasource",
             "pluginId": "prometheus",
+            "hide": 0,
             "current": {
               "text": "Prometheus",
-              "value": "Prometheus"
-            }
+              "value": "prometheus"
+            },
+            "refresh": 1
           },
           {
             "name": "environment",
