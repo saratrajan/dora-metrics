@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/saratrajan/dora-metrics
-    targetRevision: feature/microservices
+    targetRevision: main
     path: apps/travel-flights/chart
     helm:
       valueFiles:

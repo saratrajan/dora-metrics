@@ -2,7 +2,7 @@
 
 ## Context
 
-The `dora-metrics` repo (branch: `feature/microservices`) has all the Kubernetes manifests, Helm charts, ArgoCD Application CRDs, and a Docker Compose local stack — but zero automation. Going from a fresh machine to a working DORA metrics dashboard today requires ~15 manual steps, knowledge of cluster names, label selectors, port-forwards, and tool prerequisites.
+The `dora-metrics` repo (branch: `main`) has all the Kubernetes manifests, Helm charts, ArgoCD Application CRDs, and a Docker Compose local stack — but zero automation. Going from a fresh machine to a working DORA metrics dashboard today requires ~15 manual steps, knowledge of cluster names, label selectors, port-forwards, and tool prerequisites.
 
 The goal: **clone the repo, run one script, get everything working.** No desktop-specific config. No manual kubectl patchwork.
 

@@ -32,7 +32,7 @@ or instrumentation required — ArgoCD's built-in Prometheus metrics are enough.
 ## Repo file map
 
 ```
-dora-metrics/                              branch: feature/microservices
+dora-metrics/                              branch: main
 ├── README.md
 ├── grafana-dashboard-configmap.yaml        # legacy root file — NOT actively used
 ├── context/
@@ -96,7 +96,7 @@ dora-metrics/                              branch: feature/microservices
 | `kind-travel-prod` | `travel-prod` | Production environment |
 
 ArgoCD runs in both clusters. Each microservice and the monitoring stack are
-deployed via ArgoCD GitOps from this repo (branch: `feature/microservices`).
+deployed via ArgoCD GitOps from this repo (branch: `main`).
 
 ---
 
@@ -126,7 +126,7 @@ deployed via ArgoCD GitOps from this repo (branch: `feature/microservices`).
 
 ## ArgoCD Application manifests
 
-All four ArgoCD apps are in `argocd/` and committed on `feature/microservices`.
+All four ArgoCD apps are in `argocd/` and committed on `main`.
 **All use manual sync only** — no `automated: {}` block. This is intentional to
 control when deployments happen (for DORA data generation purposes).
 
@@ -307,7 +307,7 @@ Note: user `saratrajan` needs `sudo` (not in docker group). Fix: `sudo usermod -
 ## Git / workflow rules
 
 - **Always ask before `git push`** — never push without explicit user approval
-- Branch: `feature/microservices` (all current work is here)
+- Branch: `main` (all current work is here)
 - Remote: `https://github.com/saratrajan/dora-metrics.git`
 - Git author email: `5793844+saratrajan@users.noreply.github.com`
 - Commit style: natural, concise messages
