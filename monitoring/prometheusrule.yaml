@@ -24,13 +24,21 @@ spec:
 
         # --- Change Failure Rate ---
         # Ratio of failed syncs to all syncs over 7 days (0–1 scale).
-        # Joins with argocd_app_info to pull in dest_namespace label.
+        # Uses `or ... * 0` to ensure apps with zero failures still appear (not dropped).
         - record: dora:change_failure_rate:7d
           expr: |
-            sum by (name, project, dest_namespace) (
-              increase(argocd_app_sync_total{phase="Failed"}[7d])
-              * on(name) group_left(dest_namespace, project)
-                max by (name, dest_namespace, project) (argocd_app_info)
+            (
+              sum by (name, project, dest_namespace) (
+                increase(argocd_app_sync_total{phase="Failed"}[7d])
+                * on(name) group_left(dest_namespace, project)
+                  max by (name, dest_namespace, project) (argocd_app_info)
+              )
+              or
+              sum by (name, project, dest_namespace) (
+                0 * increase(argocd_app_sync_total[7d])
+                * on(name) group_left(dest_namespace, project)
+                  max by (name, dest_namespace, project) (argocd_app_info)
+              )
             )
             /
             clamp_min(
