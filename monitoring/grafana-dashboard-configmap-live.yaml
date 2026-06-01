@@ -11,10 +11,10 @@ data:
       "title": "DORA Metrics (ArgoCD Live)",
       "uid": "dora-argocd-live",
       "time": {
-        "from": "now-30d",
+        "from": "now-3h",
         "to": "now"
       },
-      "refresh": "5m",
+      "refresh": "15s",
       "templating": {
         "list": [
           {
@@ -82,7 +82,7 @@ data:
             "defaults": {
               "unit": "none",
               "decimals": 1,
-              "displayName": "Deploys / day",
+              "displayName": "Deploys / hr",
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -155,6 +155,7 @@ data:
               "unit": "s",
               "decimals": 0,
               "displayName": "Reconcile P95",
+              "decimals": 1,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -175,7 +176,7 @@ data:
           "targets": [
             {
               "datasource": { "type": "prometheus", "uid": "${datasource}" },
-              "expr": "avg(dora:lead_time_p95:1h{project=~\"$project\", dest_namespace=~\"$namespace\"})",
+              "expr": "avg(dora:lead_time_p95:1h{project=~\"$project\", dest_namespace=~\"$namespace\"} > 0)",
               "legendFormat": "Reconcile P95"
             }
           ]
@@ -218,7 +219,7 @@ data:
         },
         {
           "id": 1,
-          "title": "Deployment Frequency",
+          "title": "Deployment Frequency (deploys/day equivalent)",
           "type": "timeseries",
           "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 },
           "fieldConfig": {
@@ -227,7 +228,7 @@ data:
             },
             "overrides": [
               {
-                "matcher": { "id": "byNamePattern", "options": "30d avg" },
+                "matcher": { "id": "byRegexp", "options": "/30d avg/" },
                 "properties": [
                   { "id": "custom.lineStyle", "value": { "dash": [6, 4], "fill": "dash" } },
                   { "id": "custom.lineWidth", "value": 1 },
@@ -239,12 +240,12 @@ data:
           "targets": [
             {
               "datasource": { "type": "prometheus", "uid": "${datasource}" },
-              "expr": "sum(dora:deployment_frequency:daily{project=~\"$project\", dest_namespace=~\"$namespace\"})",
-              "legendFormat": "Deploys / day"
+              "expr": "dora:deployment_frequency:daily{dest_namespace=~\"$namespace\"}",
+              "legendFormat": "{{name}}"
             },
             {
               "datasource": { "type": "prometheus", "uid": "${datasource}" },
-              "expr": "avg_over_time(sum(dora:deployment_frequency:daily{project=~\"$project\", dest_namespace=~\"$namespace\"})[30d:1d])",
+              "expr": "avg_over_time(sum(dora:deployment_frequency:daily{dest_namespace=~\"$namespace\"})[1h:15s])",
               "legendFormat": "30d avg"
             }
           ]
@@ -269,7 +270,7 @@ data:
             },
             "overrides": [
               {
-                "matcher": { "id": "byNamePattern", "options": "30d avg" },
+                "matcher": { "id": "byRegexp", "options": "/30d avg/" },
                 "properties": [
                   { "id": "custom.lineStyle", "value": { "dash": [6, 4], "fill": "dash" } },
                   { "id": "custom.lineWidth", "value": 1 },
@@ -281,12 +282,12 @@ data:
           "targets": [
             {
               "datasource": { "type": "prometheus", "uid": "${datasource}" },
-              "expr": "sum(dora:change_failure_rate:7d{project=~\"$project\", dest_namespace=~\"$namespace\"}) / count(dora:change_failure_rate:7d{project=~\"$project\", dest_namespace=~\"$namespace\"})",
-              "legendFormat": "Failure rate"
+              "expr": "dora:change_failure_rate:7d{dest_namespace=~\"$namespace\"}",
+              "legendFormat": "{{name}}"
             },
             {
               "datasource": { "type": "prometheus", "uid": "${datasource}" },
-              "expr": "avg_over_time((sum(dora:change_failure_rate:7d{project=~\"$project\", dest_namespace=~\"$namespace\"}) / count(dora:change_failure_rate:7d{project=~\"$project\", dest_namespace=~\"$namespace\"}))[30d:1d])",
+              "expr": "avg_over_time((sum(dora:change_failure_rate:7d{dest_namespace=~\"$namespace\"}) / count(dora:change_failure_rate:7d{dest_namespace=~\"$namespace\"}))[1h:15s])",
               "legendFormat": "30d avg"
             }
           ]
@@ -303,7 +304,7 @@ data:
             },
             "overrides": [
               {
-                "matcher": { "id": "byNamePattern", "options": "30d avg" },
+                "matcher": { "id": "byRegexp", "options": "/30d avg/" },
                 "properties": [
                   { "id": "custom.lineStyle", "value": { "dash": [6, 4], "fill": "dash" } },
                   { "id": "custom.lineWidth", "value": 1 },
@@ -315,12 +316,12 @@ data:
           "targets": [
             {
               "datasource": { "type": "prometheus", "uid": "${datasource}" },
-              "expr": "dora:lead_time_p95:1h{project=~\"$project\", dest_namespace=~\"$namespace\"}",
-              "legendFormat": "{{project}}/{{name}}"
+              "expr": "dora:lead_time_p95:1h{dest_namespace=~\"$namespace\"}",
+              "legendFormat": "{{name}}"
             },
             {
               "datasource": { "type": "prometheus", "uid": "${datasource}" },
-              "expr": "avg_over_time(avg(dora:lead_time_p95:1h{project=~\"$project\", dest_namespace=~\"$namespace\"})[30d:1h])",
+              "expr": "avg_over_time(avg(dora:lead_time_p95:1h{dest_namespace=~\"$namespace\"})[1h:15s])",
               "legendFormat": "30d avg"
             }
           ]
@@ -356,13 +357,13 @@ data:
         },
         {
           "id": 5,
-          "title": "Unhealthy Applications",
+          "title": "All Services",
           "type": "table",
           "gridPos": { "x": 0, "y": 20, "w": 24, "h": 8 },
           "targets": [
             {
               "datasource": { "type": "prometheus", "uid": "${datasource}" },
-              "expr": "argocd_app_info{health_status!=\"Healthy\", project=~\"$project\", dest_namespace=~\"$namespace\"}",
+              "expr": "argocd_app_info{dest_namespace=~\"$namespace\"}",
               "legendFormat": "",
               "instant": true,
               "format": "table"
@@ -378,8 +379,7 @@ data:
                     "project",
                     "health_status",
                     "sync_status",
-                    "dest_namespace",
-                    "dest_server"
+                    "dest_namespace"
                   ]
                 }
               }
