@@ -18,18 +18,6 @@ data:
       "templating": {
         "list": [
           {
-            "name": "datasource",
-            "label": "Data Source",
-            "type": "datasource",
-            "pluginId": "prometheus",
-            "hide": 0,
-            "current": {
-              "text": "Prometheus",
-              "value": "prometheus"
-            },
-            "refresh": 1
-          },
-          {
             "name": "environment",
             "label": "Environment",
             "type": "custom",
