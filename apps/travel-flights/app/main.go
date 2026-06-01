@@ -7,6 +7,8 @@ import (
 	"os"
 )
 
+var version = "dev" // overridden at build time via -ldflags "-X main.version=x.y.z"
+
 type Flight struct {
 	ID          string `json:"id"`
 	Origin      string `json:"origin"`
@@ -44,7 +46,7 @@ func handleRoot(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{
 		"service": "travel-flights",
-		"version": "v1.0.0",
+		"version": version,
 	})
 }
 
