@@ -37,7 +37,7 @@ func main() {
 	mux.HandleFunc("/healthz", handleHealth)
 	mux.HandleFunc("/status", handleStatus)
 
-	log.Printf("travel-hotels listening on :%s", port)
+	log.Printf("travel-hotels %s listening on :%s", version, port)
 	if err := http.ListenAndServe(":"+port, mux); err != nil {
 		log.Fatal(err)
 	}
