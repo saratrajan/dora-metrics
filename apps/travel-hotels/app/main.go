@@ -44,9 +44,10 @@ func main() {
 
 func handleRoot(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{
-		"service": "travel-hotels",
-		"version": version,
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"service":    "travel-hotels",
+		"version":    version,
+		"properties": len(hotels),
 	})
 }
 
