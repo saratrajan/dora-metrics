@@ -1,0 +1,36 @@
+replicaCount: 1
+
+image:
+  repository: travel-hotels
+  tag: v1.0.4
+  pullPolicy: Never
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 9081
+
+container:
+  port: 9081
+  env:
+    PORT: "9081"
+
+namespace: travel-hotels-lab
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 128Mi
+
+probes:
+  readiness:
+    path: /healthz
+    initialDelaySeconds: 3
+    periodSeconds: 10
+  liveness:
+    path: /healthz
+    initialDelaySeconds: 5
+    periodSeconds: 15

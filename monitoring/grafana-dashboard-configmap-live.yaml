@@ -1,0 +1,384 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dora-metrics-dashboard-live
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "1"
+data:
+  dora-metrics-live.json: |
+    {
+      "title": "DORA Metrics (ArgoCD Live)",
+      "uid": "dora-argocd-live",
+      "time": {
+        "from": "now-3h",
+        "to": "now"
+      },
+      "refresh": "15s",
+      "templating": {
+        "list": [
+          {
+            "name": "environment",
+            "label": "Environment",
+            "type": "custom",
+            "query": "lab,prod",
+            "current": {
+              "text": "lab",
+              "value": "lab"
+            },
+            "options": [
+              {
+                "text": "lab",
+                "value": "lab",
+                "selected": true
+              },
+              {
+                "text": "prod",
+                "value": "prod",
+                "selected": false
+              }
+            ],
+            "includeAll": false,
+            "multi": false
+          },
+          {
+            "name": "project",
+            "label": "ArgoCD Project",
+            "type": "query",
+            "datasource": { "type": "prometheus", "uid": "prometheus" },
+            "query": "label_values(argocd_app_info{dest_namespace=~\".*$environment.*\"}, project)",
+            "refresh": 2,
+            "includeAll": true,
+            "multi": true,
+            "allValue": ".*"
+          },
+          {
+            "name": "namespace",
+            "label": "Namespace",
+            "type": "query",
+            "datasource": { "type": "prometheus", "uid": "prometheus" },
+            "query": "label_values(argocd_app_info{dest_namespace=~\".*$environment.*\"}, dest_namespace)",
+            "refresh": 2,
+            "sort": 1,
+            "includeAll": true,
+            "multi": true
+          }
+        ]
+      },
+      "panels": [
+        {
+          "id": 10,
+          "title": "SLO — Deployment Frequency",
+          "description": "DORA Elite: multiple deploys/day (>1). High: >1/week. Source: dora.dev",
+          "type": "stat",
+          "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "none",
+              "decimals": 1,
+              "displayName": "Deploys / hr",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "red", "value": null },
+                  { "color": "yellow", "value": 0.14 },
+                  { "color": "green", "value": 1 }
+                ]
+              },
+              "mappings": [],
+              "noValue": "N/A"
+            }
+          },
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "textMode": "value_and_name"
+          },
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "sum(dora:deployment_frequency:daily{project=~\"$project\", dest_namespace=~\"$namespace\"})",
+              "legendFormat": "Deploys / day"
+            }
+          ]
+        },
+        {
+          "id": 11,
+          "title": "SLO — Change Failure Rate",
+          "description": "DORA Elite/High: ≤5%. Medium: ≤15%. Low: >15%. Source: dora.dev",
+          "type": "stat",
+          "gridPos": { "x": 6, "y": 0, "w": 6, "h": 4 },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "decimals": 1,
+              "displayName": "Failure rate (7d)",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 0.05 },
+                  { "color": "red", "value": 0.15 }
+                ]
+              },
+              "mappings": [],
+              "noValue": "N/A"
+            }
+          },
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "textMode": "value_and_name"
+          },
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "sum(dora:change_failure_rate:7d{project=~\"$project\", dest_namespace=~\"$namespace\"}) / count(dora:change_failure_rate:7d{project=~\"$project\", dest_namespace=~\"$namespace\"})",
+              "legendFormat": "Failure rate (7d)"
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "title": "SLO — Lead Time (proxy)",
+          "description": "DORA Elite: <1h. High: <1d. Proxy only — based on reconcile P95, not commit timestamps.",
+          "type": "stat",
+          "gridPos": { "x": 12, "y": 0, "w": 6, "h": 4 },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "decimals": 0,
+              "displayName": "Reconcile P95",
+              "decimals": 1,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 3600 },
+                  { "color": "red", "value": 86400 }
+                ]
+              },
+              "mappings": [],
+              "noValue": "N/A"
+            }
+          },
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "textMode": "value_and_name"
+          },
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "avg(dora:lead_time_p95:1h{project=~\"$project\", dest_namespace=~\"$namespace\"} > 0)",
+              "legendFormat": "Reconcile P95"
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "title": "SLO — App Health",
+          "description": "Percentage of apps currently in Healthy state.",
+          "type": "stat",
+          "gridPos": { "x": 18, "y": 0, "w": 6, "h": 4 },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "decimals": 1,
+              "displayName": "Healthy apps",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "red", "value": null },
+                  { "color": "yellow", "value": 0.8 },
+                  { "color": "green", "value": 0.95 }
+                ]
+              },
+              "mappings": [],
+              "noValue": "N/A"
+            }
+          },
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "textMode": "value_and_name"
+          },
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "sum(argocd_app_info{health_status=\"Healthy\", project=~\"$project\", dest_namespace=~\"$namespace\"}) / sum(argocd_app_info{project=~\"$project\", dest_namespace=~\"$namespace\"})",
+              "legendFormat": "Healthy apps"
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "Deployment Frequency (deploys/day equivalent)",
+          "type": "timeseries",
+          "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 },
+          "fieldConfig": {
+            "defaults": {
+              "custom": { "lineWidth": 2 }
+            },
+            "overrides": [
+              {
+                "matcher": { "id": "byRegexp", "options": "/30d avg/" },
+                "properties": [
+                  { "id": "custom.lineStyle", "value": { "dash": [6, 4], "fill": "dash" } },
+                  { "id": "custom.lineWidth", "value": 1 },
+                  { "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }
+                ]
+              }
+            ]
+          },
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "dora:deployment_frequency:daily{dest_namespace=~\"$namespace\"}",
+              "legendFormat": "{{name}}"
+            },
+            {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "avg_over_time(sum(dora:deployment_frequency:daily{dest_namespace=~\"$namespace\"})[1h:15s])",
+              "legendFormat": "30d avg"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Change Failure Rate",
+          "type": "timeseries",
+          "gridPos": { "x": 12, "y": 4, "w": 12, "h": 8 },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "custom": { "lineWidth": 2 },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 0.05 },
+                  { "color": "red", "value": 0.15 }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": { "id": "byRegexp", "options": "/30d avg/" },
+                "properties": [
+                  { "id": "custom.lineStyle", "value": { "dash": [6, 4], "fill": "dash" } },
+                  { "id": "custom.lineWidth", "value": 1 },
+                  { "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }
+                ]
+              }
+            ]
+          },
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "dora:change_failure_rate:7d{dest_namespace=~\"$namespace\"}",
+              "legendFormat": "{{name}}"
+            },
+            {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "avg_over_time((sum(dora:change_failure_rate:7d{dest_namespace=~\"$namespace\"}) / count(dora:change_failure_rate:7d{dest_namespace=~\"$namespace\"}))[1h:15s])",
+              "legendFormat": "30d avg"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Lead Time Proxy (Reconcile P95)",
+          "type": "timeseries",
+          "gridPos": { "x": 0, "y": 12, "w": 12, "h": 8 },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "custom": { "lineWidth": 2 }
+            },
+            "overrides": [
+              {
+                "matcher": { "id": "byRegexp", "options": "/30d avg/" },
+                "properties": [
+                  { "id": "custom.lineStyle", "value": { "dash": [6, 4], "fill": "dash" } },
+                  { "id": "custom.lineWidth", "value": 1 },
+                  { "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }
+                ]
+              }
+            ]
+          },
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "dora:lead_time_p95:1h{dest_namespace=~\"$namespace\"}",
+              "legendFormat": "{{name}}"
+            },
+            {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "avg_over_time(avg(dora:lead_time_p95:1h{dest_namespace=~\"$namespace\"})[1h:15s])",
+              "legendFormat": "30d avg"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "title": "App Health",
+          "type": "piechart",
+          "gridPos": { "x": 12, "y": 12, "w": 12, "h": 8 },
+          "fieldConfig": {
+            "overrides": [
+              {
+                "matcher": { "id": "byName", "options": "Healthy" },
+                "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "green" } }]
+              },
+              {
+                "matcher": { "id": "byName", "options": "Progressing" },
+                "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "yellow" } }]
+              },
+              {
+                "matcher": { "id": "byName", "options": "Degraded" },
+                "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "rgb(255, 166, 176)" } }]
+              }
+            ]
+          },
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "sum by (health_status) (argocd_app_info{project=~\"$project\", dest_namespace=~\"$namespace\"})",
+              "legendFormat": "{{health_status}}"
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "title": "All Services",
+          "type": "table",
+          "gridPos": { "x": 0, "y": 20, "w": 24, "h": 8 },
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "argocd_app_info{dest_namespace=~\"$namespace\"}",
+              "legendFormat": "",
+              "instant": true,
+              "format": "table"
+            }
+          ],
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "name",
+                    "project",
+                    "health_status",
+                    "sync_status",
+                    "dest_namespace"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }

@@ -42,7 +42,11 @@ flowchart LR
 
 ## Dashboard preview
 
-![DORA Metrics Dashboard](docs/images/dashboard-view.jpg)
+**Lab environment**
+![DORA Metrics Dashboard — Lab](docs/images/dashboard-view-lab.jpg)
+
+**Prod environment**
+![DORA Metrics Dashboard — Prod](docs/images/dashboard-view-prd.jpg)
 
 ---
 
