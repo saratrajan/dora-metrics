@@ -15,7 +15,7 @@ container:
   env:
     PORT: "9081"
 
-namespace: travel-lab
+namespace: travel-hotels-lab
 
 resources:
   requests:
