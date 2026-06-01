@@ -43,16 +43,15 @@ spec:
             )
 
         # --- Lead Time Proxy ---
-        # P95 reconciliation duration is the closest proxy available without
-        # commit-timestamp data. True lead time requires enriching with git metadata.
+        # P95 reconciliation duration across all apps in the cluster.
+        # argocd_app_reconcile_bucket carries no per-app name label in real ArgoCD,
+        # so this is a cluster-wide aggregate — not filterable by dest_namespace.
         - record: dora:lead_time_p95:1h
           expr: |
             histogram_quantile(
               0.95,
-              sum by (name, project, dest_namespace, le) (
+              sum by (le) (
                 rate(argocd_app_reconcile_bucket[1h])
-                * on(name, namespace) group_left(dest_namespace, project)
-                  max by (name, namespace, dest_namespace, project) (argocd_app_info)
               )
             )
 

@@ -170,7 +170,7 @@ data:
           "targets": [
             {
               "datasource": { "type": "prometheus", "uid": "prometheus" },
-              "expr": "avg(dora:lead_time_p95:1h{project=~\"$project\", dest_namespace=~\"$namespace\"} > 0)",
+              "expr": "dora:lead_time_p95:1h > 0",
               "legendFormat": "Reconcile P95"
             }
           ]
@@ -310,12 +310,12 @@ data:
           "targets": [
             {
               "datasource": { "type": "prometheus", "uid": "prometheus" },
-              "expr": "dora:lead_time_p95:1h{dest_namespace=~\"$namespace\"}",
+              "expr": "dora:lead_time_p95:1h",
               "legendFormat": "{{name}}"
             },
             {
               "datasource": { "type": "prometheus", "uid": "prometheus" },
-              "expr": "avg_over_time(avg(dora:lead_time_p95:1h{dest_namespace=~\"$namespace\"})[1h:15s])",
+              "expr": "avg_over_time(dora:lead_time_p95:1h[1h:15s])",
               "legendFormat": "30d avg"
             }
           ]
