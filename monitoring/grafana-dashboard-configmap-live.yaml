@@ -24,7 +24,7 @@ data:
             "pluginId": "prometheus",
             "current": {
               "text": "Prometheus",
-              "value": "prometheus"
+              "value": "Prometheus"
             }
           },
           {
