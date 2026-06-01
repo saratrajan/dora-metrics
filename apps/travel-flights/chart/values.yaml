@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: travel-flights
-  tag: v1.0.5
+  tag: v1.0.3
   pullPolicy: Never
 
 service:
