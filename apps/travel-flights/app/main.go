@@ -35,6 +35,7 @@ func main() {
 	mux.HandleFunc("/", handleRoot)
 	mux.HandleFunc("/flights", handleFlights)
 	mux.HandleFunc("/healthz", handleHealth)
+	mux.HandleFunc("/status", handleStatus)
 
 	log.Printf("travel-flights listening on :%s", port)
 	if err := http.ListenAndServe(":"+port, mux); err != nil {
@@ -60,4 +61,14 @@ func handleHealth(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+}
+
+func handleStatus(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"service": "travel-flights",
+		"version": version,
+		"status":  "running",
+		"routes":  len(flights),
+	})
 }

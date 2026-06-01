@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: travel-hotels
-  tag: v1.0.3
+  tag: v1.0.4
   pullPolicy: Never
 
 service:
