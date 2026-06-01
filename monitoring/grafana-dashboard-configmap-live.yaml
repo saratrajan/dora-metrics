@@ -21,7 +21,11 @@ data:
             "name": "datasource",
             "label": "Data Source",
             "type": "datasource",
-            "pluginId": "prometheus"
+            "pluginId": "prometheus",
+            "current": {
+              "text": "Prometheus",
+              "value": "prometheus"
+            }
           },
           {
             "name": "environment",
