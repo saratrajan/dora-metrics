@@ -1,0 +1,489 @@
+{
+  "title": "Deploy Frequency — Trends & Services",
+  "uid": "dora-df-trends",
+  "description": "Deploy cadence over time, cumulative counts, full service inventory, and per-service drill-down. TV slideshow screen 3 of 3.",
+  "tags": ["dora", "deployment-frequency", "tv", "trends"],
+  "time": { "from": "now-6h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "refresh": "30s",
+  "schemaVersion": 38,
+  "version": 1,
+  "graphTooltip": 1,
+  "templating": {
+    "list": [
+      {
+        "name": "environment",
+        "label": "Environment",
+        "type": "custom",
+        "query": "lab,prod",
+        "current": { "text": "lab", "value": "lab" },
+        "options": [
+          { "text": "lab",  "value": "lab",  "selected": true  },
+          { "text": "prod", "value": "prod", "selected": false }
+        ],
+        "includeAll": false,
+        "multi": false
+      },
+      {
+        "name": "namespace",
+        "label": "Namespace",
+        "type": "query",
+        "datasource": { "type": "prometheus", "uid": "prometheus" },
+        "query": "label_values(argocd_app_info{dest_namespace=~\".*$environment.*\"}, dest_namespace)",
+        "refresh": 2,
+        "sort": 1,
+        "includeAll": true,
+        "multi": true,
+        "allValue": ".*"
+      },
+      {
+        "name": "app",
+        "label": "Service (drill-down)",
+        "type": "query",
+        "datasource": { "type": "prometheus", "uid": "prometheus" },
+        "query": "label_values(dora:deployment_frequency:daily{dest_namespace=~\"$namespace\"}, name)",
+        "refresh": 2,
+        "sort": 1,
+        "includeAll": false,
+        "multi": false
+      }
+    ]
+  },
+
+  "panels": [
+
+    {
+      "id": 1,
+      "type": "row",
+      "title": "Trend & Cadence",
+      "collapsed": false,
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 1 },
+      "panels": []
+    },
+
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Namespace Aggregate — With DORA Bands",
+      "description": "Total deploys/hr across the namespace. Green band = Elite zone (≥1/hr), yellow = High, red = Low. Rolling average overlay shows the sustained trend.",
+      "gridPos": { "x": 0, "y": 1, "w": 12, "h": 10 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 2,
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "thresholdsStyle": { "mode": "area" }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "rgba(242,73,92,0.15)",   "value": null },
+              { "color": "rgba(255,152,48,0.15)",  "value": 0.14 },
+              { "color": "rgba(115,191,105,0.15)", "value": 1    }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byRegexp", "options": "/rolling avg/" },
+            "properties": [
+              { "id": "custom.lineStyle", "value": { "dash": [8, 4], "fill": "dash" } },
+              { "id": "custom.lineWidth", "value": 1 },
+              { "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "desc" },
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum(dora:deployment_frequency:daily{dest_namespace=~\"$namespace\"})",
+          "legendFormat": "total deploys/hr"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "avg_over_time(sum(dora:deployment_frequency:daily{dest_namespace=~\"$namespace\"})[1h:15s])",
+          "legendFormat": "1h rolling avg"
+        }
+      ]
+    },
+
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Live Burst Rate — 15m Sliding Window (deploys/hr)",
+      "description": "Raw counter rate over 15-minute windows, scaled to deploys/hr. Shows burst activity and sudden spikes not visible in the 1h recording rule.",
+      "gridPos": { "x": 12, "y": 1, "w": 12, "h": 10 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 2,
+          "custom": {
+            "lineWidth": 1,
+            "fillOpacity": 40,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "desc" },
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["max", "mean"]
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum by (name)(rate(argocd_app_sync_total{phase=\"Succeeded\", dest_namespace=~\"$namespace\"}[15m])) * 3600",
+          "legendFormat": "{{name}}"
+        }
+      ]
+    },
+
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Cumulative Deploy Count — Over Selected Window",
+      "description": "Running total of successful syncs within the dashboard time window. A steeper slope = higher deploy velocity at that moment.",
+      "gridPos": { "x": 0, "y": 11, "w": 24, "h": 8 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 20
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "desc" },
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": ["lastNotNull"]
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum by (name)(increase(argocd_app_sync_total{phase=\"Succeeded\", dest_namespace=~\"$namespace\"}[$__rate_interval]))",
+          "legendFormat": "{{name}}"
+        }
+      ]
+    },
+
+    {
+      "id": 10,
+      "type": "row",
+      "title": "Full Service Inventory",
+      "collapsed": false,
+      "gridPos": { "x": 0, "y": 19, "w": 24, "h": 1 },
+      "panels": []
+    },
+
+    {
+      "id": 11,
+      "type": "table",
+      "title": "All Services — Deploy Frequency Breakdown",
+      "description": "Complete namespace inventory sorted by deploy rate. Cell colour = DORA tier.",
+      "gridPos": { "x": 0, "y": 20, "w": 24, "h": 14 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 2
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "Deploys/hr" },
+            "properties": [
+              { "id": "custom.displayMode", "value": "color-background-solid" },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    { "color": "red",    "value": null },
+                    { "color": "yellow", "value": 0.14 },
+                    { "color": "green",  "value": 1    }
+                  ]
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  { "type": "range", "options": { "from": 1,     "to": 1000000, "result": { "text": "Elite",  "index": 0 } } },
+                  { "type": "range", "options": { "from": 0.14,  "to": 0.9999,  "result": { "text": "High",   "index": 1 } } },
+                  { "type": "range", "options": { "from": 0.014, "to": 0.1399,  "result": { "text": "Medium", "index": 2 } } },
+                  { "type": "range", "options": { "from": -0.001,"to": 0.0139,  "result": { "text": "Low",    "index": 3 } } }
+                ]
+              },
+              { "id": "custom.width", "value": 130 }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Service" },
+            "properties": [
+              { "id": "custom.width", "value": 260 },
+              { "id": "links", "value": [] }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Namespace" },
+            "properties": [{ "id": "custom.width", "value": 160 }]
+          }
+        ]
+      },
+      "options": {
+        "sortBy": [{ "displayName": "Deploys/hr", "desc": true }],
+        "footer": {
+          "show": true,
+          "reducer": ["sum"],
+          "fields": ["Deploys/hr"]
+        }
+      },
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": { "include": { "names": ["name", "dest_namespace", "Value"] } }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "renameByName": {
+              "name":           "Service",
+              "dest_namespace": "Namespace",
+              "Value":          "Deploys/hr"
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": { "fields": [{ "displayName": "Deploys/hr", "desc": true }] }
+        }
+      ],
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "dora:deployment_frequency:daily{dest_namespace=~\"$namespace\"}",
+          "legendFormat": "",
+          "instant": true,
+          "format": "table"
+        }
+      ]
+    },
+
+    {
+      "id": 20,
+      "type": "row",
+      "title": "Service Drill-Down — $app",
+      "collapsed": false,
+      "gridPos": { "x": 0, "y": 34, "w": 24, "h": 1 },
+      "panels": []
+    },
+
+    {
+      "id": 21,
+      "type": "timeseries",
+      "title": "Deploy History — $app",
+      "description": "Full deploy frequency timeline for the selected service. Use the Service drop-down at the top to switch services.",
+      "gridPos": { "x": 0, "y": 35, "w": 16, "h": 9 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 2,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 30,
+            "thresholdsStyle": { "mode": "area" }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "rgba(242,73,92,0.12)",   "value": null },
+              { "color": "rgba(255,152,48,0.12)",  "value": 0.14 },
+              { "color": "rgba(115,191,105,0.12)", "value": 1    }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": { "mode": "single" },
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "dora:deployment_frequency:daily{name=~\"$app\", dest_namespace=~\"$namespace\"}",
+          "legendFormat": "{{name}} · {{dest_namespace}}"
+        }
+      ]
+    },
+
+    {
+      "id": 22,
+      "type": "stat",
+      "title": "DORA Tier — $app",
+      "gridPos": { "x": 16, "y": 35, "w": 4, "h": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [
+            { "type": "range", "options": { "from": 1,      "to": 1000000, "result": { "text": "Elite",  "index": 0 } } },
+            { "type": "range", "options": { "from": 0.14,   "to": 0.9999,  "result": { "text": "High",   "index": 1 } } },
+            { "type": "range", "options": { "from": 0.014,  "to": 0.1399,  "result": { "text": "Medium", "index": 2 } } },
+            { "type": "range", "options": { "from": -0.001, "to": 0.0139,  "result": { "text": "Low",    "index": 3 } } }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red",    "value": null },
+              { "color": "yellow", "value": 0.14 },
+              { "color": "green",  "value": 1    }
+            ]
+          },
+          "noValue": "N/A"
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value",
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "dora:deployment_frequency:daily{name=~\"$app\", dest_namespace=~\"$namespace\"}",
+          "legendFormat": "tier"
+        }
+      ]
+    },
+
+    {
+      "id": 23,
+      "type": "stat",
+      "title": "Deploys / hr — $app",
+      "gridPos": { "x": 20, "y": 35, "w": 4, "h": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 2,
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red",    "value": null },
+              { "color": "yellow", "value": 0.14 },
+              { "color": "green",  "value": 1    }
+            ]
+          },
+          "noValue": "N/A"
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "textMode": "value_and_name",
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "dora:deployment_frequency:daily{name=~\"$app\", dest_namespace=~\"$namespace\"}",
+          "legendFormat": "deploys/hr"
+        }
+      ]
+    },
+
+    {
+      "id": 24,
+      "type": "stat",
+      "title": "Success Rate — $app",
+      "gridPos": { "x": 16, "y": 39, "w": 4, "h": 5 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "decimals": 1,
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red",    "value": null },
+              { "color": "yellow", "value": 0.85 },
+              { "color": "green",  "value": 0.95 }
+            ]
+          },
+          "noValue": "N/A"
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value_and_name",
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum(increase(argocd_app_sync_total{name=~\"$app\", phase=\"Succeeded\", dest_namespace=~\"$namespace\"}[1h])) / clamp_min(sum(increase(argocd_app_sync_total{name=~\"$app\", dest_namespace=~\"$namespace\"}[1h])), 1)",
+          "legendFormat": "success rate"
+        }
+      ]
+    },
+
+    {
+      "id": 25,
+      "type": "stat",
+      "title": "Failed Syncs — $app",
+      "gridPos": { "x": 20, "y": 39, "w": 4, "h": 5 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0,
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green",  "value": null },
+              { "color": "yellow", "value": 1    },
+              { "color": "red",    "value": 5    }
+            ]
+          },
+          "noValue": "0"
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value_and_name",
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "sum(increase(argocd_app_sync_total{name=~\"$app\", phase=\"Failed\", dest_namespace=~\"$namespace\"}[1h]))",
+          "legendFormat": "failed syncs"
+        }
+      ]
+    }
+
+  ]
+}

@@ -1,0 +1,141 @@
+{
+  "title": "Deploy Frequency — Service Rankings",
+  "uid": "dora-df-rankings",
+  "description": "Top and bottom deployers by namespace. Colour-coded by DORA tier. TV slideshow screen 2 of 3.",
+  "tags": ["dora", "deployment-frequency", "tv", "rankings"],
+  "time": { "from": "now-3h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "refresh": "30s",
+  "schemaVersion": 38,
+  "version": 1,
+  "graphTooltip": 0,
+  "templating": {
+    "list": [
+      {
+        "name": "environment",
+        "label": "Environment",
+        "type": "custom",
+        "query": "lab,prod",
+        "current": { "text": "lab", "value": "lab" },
+        "options": [
+          { "text": "lab",  "value": "lab",  "selected": true  },
+          { "text": "prod", "value": "prod", "selected": false }
+        ],
+        "includeAll": false,
+        "multi": false
+      },
+      {
+        "name": "namespace",
+        "label": "Namespace",
+        "type": "query",
+        "datasource": { "type": "prometheus", "uid": "prometheus" },
+        "query": "label_values(argocd_app_info{dest_namespace=~\".*$environment.*\"}, dest_namespace)",
+        "refresh": 2,
+        "sort": 1,
+        "includeAll": true,
+        "multi": true,
+        "allValue": ".*"
+      }
+    ]
+  },
+
+  "panels": [
+
+    {
+      "id": 1,
+      "type": "row",
+      "title": "Service Rankings",
+      "collapsed": false,
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 1 },
+      "panels": []
+    },
+
+    {
+      "id": 2,
+      "type": "bargauge",
+      "title": "Top 10 — Most Active Deployers (deploys/hr)",
+      "description": "Highest-velocity services in the namespace. Colour follows DORA tier thresholds: green = Elite, yellow = High, red = Low.",
+      "gridPos": { "x": 0, "y": 1, "w": 12, "h": 20 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 2,
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red",    "value": null },
+              { "color": "yellow", "value": 0.14 },
+              { "color": "green",  "value": 1    }
+            ]
+          },
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "valueMode": "color",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "showUnfilled": true,
+        "minVizWidth": 0,
+        "minVizHeight": 10,
+        "text": { "titleSize": 14, "valueSize": 18 }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "topk(10, dora:deployment_frequency:daily{dest_namespace=~\"$namespace\"})",
+          "legendFormat": "{{name}}",
+          "instant": true
+        }
+      ]
+    },
+
+    {
+      "id": 3,
+      "type": "bargauge",
+      "title": "Bottom 10 — Services with Lowest Deploy Activity (deploys/hr)",
+      "description": "Services with the fewest deploys in the current window. Informational only — useful for spotting stale pipelines.",
+      "gridPos": { "x": 12, "y": 1, "w": 12, "h": 20 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 2,
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red",    "value": null },
+              { "color": "yellow", "value": 0.14 },
+              { "color": "green",  "value": 1    }
+            ]
+          },
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "valueMode": "color",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "showUnfilled": true,
+        "minVizWidth": 0,
+        "minVizHeight": 10,
+        "text": { "titleSize": 14, "valueSize": 18 }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "bottomk(10, dora:deployment_frequency:daily{dest_namespace=~\"$namespace\"})",
+          "legendFormat": "{{name}}",
+          "instant": true
+        }
+      ]
+    }
+
+  ]
+}
