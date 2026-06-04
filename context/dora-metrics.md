@@ -245,6 +245,7 @@ also has `$app` for service drill-down.
 | `df-overview.json` | `dora-df-overview` | 10 | 6 namespace stat tiles + stacked area by service + DORA tier donut |
 | `df-rankings.json` | `dora-df-rankings` | 3 | Top 10 / Bottom 10 deployers as horizontal bar gauges |
 | `df-trends.json` | `dora-df-trends` | 12 | Namespace aggregate + DORA bands, 15m burst rate, cumulative count, full service inventory table, per-service drill-down |
+| `df-leaderboard.json` | `dora-df-leaderboard` | 15 | Gamified weekly/monthly race: Gold/Silver/Bronze podium, Biggest Climbers/Fallers bargauges, ranked table (this period vs last period + Change column), New Entries / Improved / Declined stats, deploy velocity race timeseries |
 
 All 25 panels from the original monolithic `deployment-frequency.json` are
 preserved across the three files (that file has been deleted).
@@ -526,6 +527,19 @@ attempt and simplifying the rule to use what the exporter actually emits.
 ---
 
 ### Phase 7 — TV Deployment Frequency dashboards (2026-06-04)
+
+**`df-leaderboard.json` — Gamified leaderboard dashboard (screen 4 of 4)**
+
+15 panels across 4 rows. Uses `$period` variable (7d / 30d) to compare this period vs last. Key panels:
+- **Top 3** (🚀 Pole Position `#E53935` / ⚡ Fast Lane `#1E88E5` / 🔥 Hot Pursuit `#FB8C00`): `topk(1/2/3)` with `unless` chaining to isolate each rank. Gold/Silver/Bronze deliberately avoided — those terms conflict with the DevOps maturity model used in this project.
+- **Climbers / Fallers bargauges**: positive/negative delta filtered with `> 0` / `< 0`, fallers negated for clean bar display
+- **Leaderboard table**: two instant queries (A = this period, B = last period offset $period), merged and `calculateField` binary subtraction for Change column, color-coded red/gray/green
+- **New Entries stat**: `unless` vector matching to find services with zero last period
+- **Race timeseries**: `topk(10, dora:deployment_frequency:daily)` over the time window
+
+`$period` variable interpolated as PromQL offset: `offset $period` → `offset 7d`.
+
+---
 
 **`b791c6e` Three TV-optimised Deployment Frequency dashboards** (branch: `feature/deployment-frequency`)
 
