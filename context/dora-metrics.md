@@ -83,7 +83,10 @@ dora-metrics/                              branch: main
             │   └── prometheus.yaml         # uid: prometheus (must match dashboard JSON)
             └── dashboards/
                 ├── provider.yaml
-                └── dora-metrics.json       # local docker-compose dashboard
+                ├── dora-metrics.json       # local docker-compose dashboard (DORA overview)
+                ├── df-overview.json        # Deployment Frequency screen 1 — namespace stats + tier donut
+                ├── df-rankings.json        # Deployment Frequency screen 2 — top/bottom 10 bar gauges
+                └── df-trends.json          # Deployment Frequency screen 3 — trends + inventory + drill-down
 ```
 
 ---
@@ -228,6 +231,32 @@ For the in-cluster case (separate clusters), the join is safe.
 **Do not** use `grafana-dashboard-configmap.yaml` (root-level legacy file) — it
 is outdated and not referenced by anything active.
 
+---
+
+## Deployment Frequency — TV slideshow dashboards
+
+Three focused dashboards on branch `feature/deployment-frequency`, designed for
+big-screen / slideshow display. All use `uid: prometheus` datasource and 30s refresh.
+Variables: `$environment` (lab/prod) and `$namespace` (multi-select). Screen 3
+also has `$app` for service drill-down.
+
+| File | UID | Panels | Purpose |
+|------|-----|--------|---------|
+| `df-overview.json` | `dora-df-overview` | 10 | 6 namespace stat tiles + stacked area by service + DORA tier donut |
+| `df-rankings.json` | `dora-df-rankings` | 3 | Top 10 / Bottom 10 deployers as horizontal bar gauges |
+| `df-trends.json` | `dora-df-trends` | 12 | Namespace aggregate + DORA bands, 15m burst rate, cumulative count, full service inventory table, per-service drill-down |
+
+All 25 panels from the original monolithic `deployment-frequency.json` are
+preserved across the three files (that file has been deleted).
+
+### Design decisions
+- **Top/Bottom 10** (not 15) on the rankings screen — keeps bar gauges readable on TV
+- **No `$app` variable on screens 1 & 2** — fewer dropdowns in slideshow mode
+- **Stat text sizes explicit** (`titleSize: 14, valueSize: 40–52`) for TV legibility
+- **DORA thresholds:** Red < 0.14/hr · Yellow 0.14–1/hr · Green ≥ 1/hr (1h windows, local testing)
+- **Bottom 10 title** is neutral ("Services with Lowest Deploy Activity") — not shaming
+- `or vector(0)` guards on all tier-count queries to prevent empty donut slices
+
 ### Template variables (both dashboards, in order)
 1. `datasource` — datasource picker (live dashboard only)
 2. `environment` — custom: `lab,prod`, default `lab`
@@ -311,6 +340,233 @@ Note: user `saratrajan` needs `sudo` (not in docker group). Fix: `sudo usermod -
 - Remote: `https://github.com/saratrajan/dora-metrics.git`
 - Git author email: `5793844+saratrajan@users.noreply.github.com`
 - Commit style: natural, concise messages
+
+---
+
+## Project timeline & thought process
+
+Reconstructed from `git log --all`. Captures not just what changed but why, so
+a new session can understand the reasoning chain without re-reading the code.
+
+---
+
+### Phase 1 — Foundation (2026-05-29)
+
+**`73f04f7` Initial commit**
+First real skeleton: `README.md`, `argocd-application.yaml`,
+`grafana-dashboard-configmap.yaml`, `prometheusrule.yaml`,
+`servicemonitors.yaml`. Established the core insight: ArgoCD's built-in
+Prometheus metrics (`argocd_app_sync_total`, `argocd_app_reconcile_bucket`)
+are sufficient for all four DORA metrics — no extra instrumentation needed.
+
+**`c14b28b` Add SLO stat panels and 30-day trend lines**
+First iteration of the dashboard went beyond raw panels and added SLO stat
+tiles and 30-day trend overlays. Aim: make the dashboard actionable, not just
+decorative.
+
+**`2c4685d` Add docker-compose local testing stack**
+Critical decision: Kubernetes is too slow a feedback loop for dashboard
+development. Introduced a `local-test/` (later renamed `docker-compose/`)
+directory with three containers — mock exporter, Prometheus, Grafana — that
+simulate ArgoCD without any cluster. Started with 5 services. This became
+the primary dev environment for all subsequent dashboard work.
+
+**`74a47b7` Fix Grafana datasource UID**
+First bug: the dashboard JSON referenced the datasource by UID but the
+provisioned datasource had no explicit UID, so all panels were empty.
+Fix: add `uid: prometheus` to `prometheus.yaml`. Lesson: always hard-code the
+datasource UID in both the provisioning YAML and the dashboard JSON.
+
+**`903bccb` Fixes to exporter and dashboard**
+Large expansion — dashboard got more panels, exporter gained richer metric
+simulation. Rules file tuned.
+
+**`399b704` Major exporter rewrite**
+Grew the mock from 5 to 31 microservices across 8 teams (flight, hotel,
+cruise, payments, etc.), added Poisson-sampled deploy events, version
+auto-bumping (80% patch / 15% minor / 5% major), and pre-seeded history
+(cruise 20-45 days, core platform 365 days). The goal was enough variety in
+deploy rates to exercise all four DORA tiers on the dashboard at the same time.
+
+**`487a06d` First context file**
+Committed `context/dora-metrics.md` to allow future Claude sessions to
+resume without re-deriving everything from the code. This pattern
+(context-as-code) became a recurring practice.
+
+---
+
+### Phase 2 — Deployment Frequency metric fix (2026-05-29)
+
+**`be6d025` Remove ×24 extrapolation from deploy frequency**
+The original recording rule multiplied the 1h rate by 24 to get
+"deploys/day". This was wrong for local testing: with a 1h window, you get
+at most a handful of events, and ×24 produced misleadingly large numbers.
+Decision: drop the extrapolation entirely and display raw deploys/hr. The
+DORA tier thresholds were scaled accordingly (Elite ≥ 1/hr instead of 1/day).
+This is a local-only convention — the in-cluster rule still uses 24h windows.
+
+**`640e7d5` Fix Deployment Frequency panel bug**
+Panel-level fix following the recording rule change.
+
+---
+
+### Phase 3 — Grafana upgrade + microservices (2026-05-31)
+
+**`e818e0a` Grafana 10.x → 11.x**
+Upgraded the docker-compose Grafana image. Grafana 11 removed `byNamePattern`
+for field overrides — all subsequent dashboards use `byRegexp` instead. This
+broke any session that tried to copy overrides from older dashboard JSON.
+
+**`6dbded3` App Health piechart color fix**
+`Degraded` was red by default but the Grafana red was too harsh. Changed to
+`rgb(255, 166, 176)` (light pink/red) to keep it readable without alarming.
+
+**`b553c9a` → `eb1be48` → `58799f0` Introduce travel-flights and travel-hotels**
+Added two real Go microservices to the repo — not just for show, but to
+produce real ArgoCD sync events for DORA data generation. Each service is a
+simple HTTP server with version injected at build time via `go build -ldflags`.
+Version bumps later drove `argocd_app_sync_total` counters in the live cluster.
+
+**`bd02a1b` ArgoCD apps for flights and hotels**
+Wired the Helm charts into ArgoCD (`argocd/travel-flights-app.yaml`,
+`argocd/travel-hotels-app.yaml`). Both use manual sync intentionally — you
+trigger syncs yourself to control DORA data generation, rather than having
+ArgoCD auto-deploy and making the metrics non-deterministic.
+
+**`82dfa7e` → `4d716b0` Monitoring folder refactor**
+Moved `grafana-dashboard-configmap.yaml` and Prometheus files under
+`monitoring/`. Deleted the old root-level `argocd-application.yaml` (replaced
+by the per-resource files in `argocd/`). The root-level
+`grafana-dashboard-configmap.yaml` was NOT deleted and remains as legacy.
+
+**`d2645f8` In-cluster dashboard**
+Created `monitoring/grafana-dashboard-configmap-live.yaml` — a Grafana
+dashboard ConfigMap deployed by ArgoCD into kube-prometheus-stack. Key
+difference from the docker-compose version: uses a `${datasource}` Grafana
+variable instead of a hardcoded UID, since the in-cluster datasource name
+varies.
+
+**`d5951b0` kube-prometheus-stack + monitoring ArgoCD apps**
+Added `argocd/kube-prometheus-stack-app.yaml` (installs kube-prometheus-stack
+v69.3.2 via Helm) and `argocd/monitoring-app.yaml` (syncs `monitoring/` from
+this repo). The two critical Helm values:
+`serviceMonitorSelectorNilUsesHelmValues: false` and
+`ruleSelectorNilUsesHelmValues: false` — without these, the Prometheus
+Operator ignores ServiceMonitors and PrometheusRules created outside the
+kube-prometheus-stack release.
+
+---
+
+### Phase 4 — In-cluster datasource debugging (2026-05-31)
+
+Four rapid-fire commits to fix the in-cluster dashboard's datasource variable:
+
+| Commit | What broke | Fix |
+|--------|-----------|-----|
+| `9ab41e4` | Initial in-cluster fixes | General panel/query corrections |
+| `23fcde3` | `${datasource}` not resolving | Added datasource variable definition |
+| `48ae15c` | Variable default using UID | Changed default to use name, not UID |
+| `bba2335` | Variable not refreshing on load | Added `refresh: 1` |
+| `03fda49` | Still resolving wrong datasource | Hard-coded the prometheus datasource UUID in all panel targets |
+| `b0eef2a` | Redundant namespace filter | Removed it |
+
+Root cause: Grafana variable chaining for datasource selectors is finicky. The
+`${datasource}` interpolation only works correctly when the variable has
+`current.value` set to the actual datasource UID, not the display name.
+`refresh: 1` (on load) is required for the variable to pick up the live
+datasource list before panels render.
+
+---
+
+### Phase 5 — Generating real DORA data (2026-05-31)
+
+Series of version bumps on the travel-flights and travel-hotels charts to
+produce real ArgoCD sync events:
+
+```
+v1.0.2 → v1.0.3 → v1.0.4 → v1.0.5 → rollback to v1.0.3 → redeploy v1.0.4
+```
+
+Each `helm upgrade` triggered by an ArgoCD manual sync increments
+`argocd_app_sync_total{phase="Succeeded"}`, which feeds the DORA recording
+rules. The rollback (`d3dcd50`) was intentional — to test Change Failure Rate
+and MTTR panels with a real failure event.
+
+**`a38185c` Fix recording rules — join for dest_namespace**
+`argocd_app_sync_total` carries `dest_namespace` but
+`argocd_app_reconcile_bucket` does not. Added a `group_left(dest_namespace)`
+join with `argocd_app_info` on `(name, namespace)` to propagate the label to
+lead time rules. Safe when lab and prod are on separate clusters (no
+many-to-many collision). The docker-compose mock exporter avoids this entirely
+by emitting `dest_namespace` directly on reconcile metrics.
+
+---
+
+### Phase 6 — Stabilization & rule fixes (2026-05-31)
+
+**`3270b7d` Bootstrap context**
+Added `context/plan-bootstrap.md` as a planning scratchpad for cluster
+bootstrapping steps.
+
+**`7dfb9ad` Fix lead time rule — drop broken join**
+A previous version of the lead time rule used `name` as a join key between
+`argocd_app_reconcile_bucket` and `argocd_app_info`. Problem: the reconcile
+bucket has no `name` label (it uses `app`). Fixed by dropping the join
+attempt and simplifying the rule to use what the exporter actually emits.
+
+**`1f50fe5` → `99c397f` → `4035c5d` ArgoCD pointing + CFR fix**
+- `monitoring-app.yaml` and `travel-flights-app.yaml` had `targetRevision` set
+  to a feature branch; corrected to `main`.
+- A chart `values.yaml` referenced a container tag that didn't exist in the
+  local kind registry.
+- CFR (`dora:change_failure_rate:7d`) prometheusrule was incorrect —
+  the failure detection expression was over-broad, counting non-failure syncs.
+  Fixed the PromQL to properly identify `phase="Failed"` vs total syncs.
+
+---
+
+### Phase 7 — TV Deployment Frequency dashboards (2026-06-04)
+
+**`b791c6e` Three TV-optimised Deployment Frequency dashboards** (branch: `feature/deployment-frequency`)
+
+The original `dora-metrics.json` dashboard covers all four DORA metrics in one
+view. The ask was a dedicated, deeper Deployment Frequency experience split into
+TV slideshow screens — informational, not shaming, readable from across a room.
+
+**Design sequence:**
+
+1. **Prototype as one file first** — built `deployment-frequency.json` (25
+   panels, 6 rows) to validate all the queries and layouts before splitting.
+   This was never committed to main; it was a working draft.
+
+2. **Decided on 3 screens, not 4** — the original split idea had
+   Trend & Cadence as its own screen, but Trends + Inventory + Drill-down
+   fit cleanly on one screen since the TV audience doesn't need to see all
+   three simultaneously.
+
+3. **Screen 1 — Overview** (`df-overview.json`, uid: `dora-df-overview`):
+   6 stat tiles (DORA Tier, Deploys/hr, Active Services, Elite Services,
+   Success Rate, Top Deployer) + stacked area by service + DORA tier donut.
+   Stat text sizes explicit (`titleSize: 14`, `valueSize: 40-52`) for TV.
+   No `$app` drill-down variable — keeps the header bar minimal in slideshow mode.
+
+4. **Screen 2 — Rankings** (`df-rankings.json`, uid: `dora-df-rankings`):
+   Started as Top/Bottom 15, changed to **Top/Bottom 10** before commit.
+   Reason: 15 bars on a TV are too small to read service names without walking
+   up to the screen. 10 bars give each service enough vertical height.
+   Bottom panel title deliberately neutral — "Services with Lowest Deploy
+   Activity" rather than "Slowest" — per the ask to avoid shaming.
+
+5. **Screen 3 — Trends & Services** (`df-trends.json`, uid: `dora-df-trends`):
+   All three trend charts (namespace aggregate with DORA bands, 15m burst rate,
+   cumulative count), full service inventory table (colour-coded by DORA tier,
+   sortable, footer with namespace total), and per-service drill-down section
+   with `$app` variable. This is the interactive screen — not for passive
+   slideshow but for when someone walks up to investigate a specific service.
+
+6. **Panel accounting** — verified 25 panels in = 25 panels out (10 + 3 + 12)
+   before committing. The original `deployment-frequency.json` was deleted
+   since it was never committed.
 
 ---
 
