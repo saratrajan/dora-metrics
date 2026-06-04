@@ -67,6 +67,7 @@ dora-metrics/                              branch: main
 │   └── travel-hotels-app.yaml             # deploys hotels chart → travel-hotels-lab
 ├── monitoring/
 │   ├── grafana-dashboard-configmap-live.yaml  # in-cluster Grafana dashboard (15 fixes applied)
+│   ├── grafana-dashboards-deploy-freq.yaml    # ConfigMap with all 4 DF dashboards (overview, rankings, trends, leaderboard)
 │   ├── prometheusrule.yaml
 │   └── servicemonitors.yaml
 └── docker-compose/
@@ -235,17 +236,20 @@ is outdated and not referenced by anything active.
 
 ## Deployment Frequency — TV slideshow dashboards
 
-Three focused dashboards on branch `feature/deployment-frequency`, designed for
-big-screen / slideshow display. All use `uid: prometheus` datasource and 30s refresh.
-Variables: `$environment` (lab/prod) and `$namespace` (multi-select). Screen 3
-also has `$app` for service drill-down.
+Four focused dashboards designed for big-screen / slideshow display. All use `uid: prometheus`
+datasource and 30s refresh. Variables: `$environment` (lab/prod) and `$namespace` (multi-select).
+Screen 3 also has `$app` for service drill-down. Screen 4 also has `$period` (7d / 30d).
+
+All four are embedded in `monitoring/grafana-dashboards-deploy-freq.yaml` (ConfigMap name:
+`deploy-frequency-dashboards`, label `grafana_dashboard: "1"`) for in-cluster Grafana via
+ArgoCD `dora-monitoring` app. Added via branch `feature/configmap_leaderboard`.
 
 | File | UID | Panels | Purpose |
 |------|-----|--------|---------|
 | `df-overview.json` | `dora-df-overview` | 10 | 6 namespace stat tiles + stacked area by service + DORA tier donut |
 | `df-rankings.json` | `dora-df-rankings` | 3 | Top 10 / Bottom 10 deployers as horizontal bar gauges |
 | `df-trends.json` | `dora-df-trends` | 12 | Namespace aggregate + DORA bands, 15m burst rate, cumulative count, full service inventory table, per-service drill-down |
-| `df-leaderboard.json` | `dora-df-leaderboard` | 15 | Gamified weekly/monthly race: Gold/Silver/Bronze podium, Biggest Climbers/Fallers bargauges, ranked table (this period vs last period + Change column), New Entries / Improved / Declined stats, deploy velocity race timeseries |
+| `df-leaderboard.json` | `dora-df-leaderboard` | 15 | Gamified weekly/monthly race: 🚀 Pole Position / ⚡ Fast Lane / 🔥 Hot Pursuit podium, Biggest Climbers/Fallers bargauges, ranked table (this period vs last period + Change column), New Entries / Improved / Declined stats, deploy velocity race timeseries |
 
 All 25 panels from the original monolithic `deployment-frequency.json` are
 preserved across the three files (that file has been deleted).
