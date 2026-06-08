@@ -13,24 +13,11 @@
   "templating": {
     "list": [
       {
-        "name": "environment",
-        "label": "Environment",
-        "type": "custom",
-        "query": "lab,prod",
-        "current": { "text": "lab", "value": "lab" },
-        "options": [
-          { "text": "lab",  "value": "lab",  "selected": true  },
-          { "text": "prod", "value": "prod", "selected": false }
-        ],
-        "includeAll": false,
-        "multi": false
-      },
-      {
         "name": "namespace",
         "label": "Namespace",
         "type": "query",
         "datasource": { "type": "prometheus", "uid": "prometheus" },
-        "query": "label_values(argocd_app_info{dest_namespace=~\".*$environment.*\"}, dest_namespace)",
+        "query": "label_values(argocd_app_info, dest_namespace)",
         "refresh": 2,
         "sort": 1,
         "includeAll": true,
