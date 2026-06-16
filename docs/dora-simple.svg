@@ -1,6 +1,49 @@
-<svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" font-family="'Segoe UI', system-ui, sans-serif">
+<svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" role="img" font-family="'Segoe UI', system-ui, sans-serif">
   <title>DORA Metrics — Simple Overview</title>
   <desc>Simple layman-friendly diagram showing how deployment data flows from ArgoCD to Prometheus to Grafana.</desc>
+
+  <defs>
+    <!-- ArgoCD logo (compass / gear style) -->
+    <g id="logo-argocd">
+      <circle r="22" fill="#1e3a5f" stroke="#3b82f6" stroke-width="2"/>
+      <!-- outer ring ticks -->
+      <circle r="18" fill="none" stroke="#60a5fa" stroke-width="1.2" stroke-dasharray="3,3.5"/>
+      <!-- compass arms -->
+      <line x1="0" y1="-18" x2="0" y2="-7"  stroke="#93c5fd" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="0"  y1="7"  x2="0"  y2="18" stroke="#93c5fd" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="-18" y1="0" x2="-7" y2="0"  stroke="#93c5fd" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="7"  y1="0"  x2="18" y2="0"  stroke="#93c5fd" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- center hub -->
+      <circle r="5" fill="#3b82f6"/>
+      <circle r="2.5" fill="#bfdbfe"/>
+    </g>
+
+    <!-- Prometheus logo (flame) -->
+    <g id="logo-prometheus">
+      <circle r="22" fill="#1a0a2e" stroke="#e6522c" stroke-width="2"/>
+      <!-- outer flame -->
+      <path d="M0,-17 C-3,-10 -11,-4 -9,7 C-7,15 0,19 0,19 C0,19 7,15 9,7 C11,-4 3,-10 0,-17Z"
+            fill="#e6522c"/>
+      <!-- inner highlight -->
+      <path d="M0,-8 C-2,-4 -5,1 -4,7 C-3,11 0,13 0,13 C0,13 3,11 4,7 C5,1 2,-4 0,-8Z"
+            fill="#f5a623"/>
+      <!-- tiny bright core -->
+      <ellipse cx="0" cy="9" rx="2" ry="3" fill="#fde68a"/>
+    </g>
+
+    <!-- Grafana logo (orange G) -->
+    <g id="logo-grafana">
+      <circle r="22" fill="#1a1a1a" stroke="#f46800" stroke-width="2"/>
+      <!-- orange filled semicircle (the Grafana "G" shape) -->
+      <path d="M0,-16 A16,16 0 1,1 -0.1,-16 Z" fill="#f46800" opacity="0.15"/>
+      <!-- bold arc -->
+      <path d="M14,0 A14,14 0 1,1 0,-14" fill="none" stroke="#f46800" stroke-width="4.5" stroke-linecap="round"/>
+      <!-- horizontal bar of G -->
+      <line x1="0" y1="0" x2="14" y2="0" stroke="#f46800" stroke-width="4.5" stroke-linecap="round"/>
+      <!-- vertical drop -->
+      <line x1="14" y1="0" x2="14" y2="7" stroke="#f46800" stroke-width="4.5" stroke-linecap="round"/>
+    </g>
+  </defs>
 
   <!-- Background -->
   <rect width="860" height="400" fill="#0f1117"/>
@@ -11,77 +54,55 @@
 
   <!-- ══════ BOX 1: ArgoCD ══════ -->
   <rect x="40" y="88" width="210" height="210" rx="16" fill="#0d1f35" stroke="#2563eb" stroke-width="2"/>
-
-  <!-- ArgoCD logo -->
-  <circle cx="145" cy="136" r="30" fill="#1e3a5f"/>
-  <image href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/argocd/argocd-original.svg"
-         x="115" y="106" width="60" height="60"/>
-
-  <text x="145" y="186" text-anchor="middle" fill="#3b82f6" font-size="13" font-weight="700">ArgoCD</text>
-  <text x="145" y="203" text-anchor="middle" fill="#64748b" font-size="10">Deploys your apps</text>
-  <text x="145" y="218" text-anchor="middle" fill="#64748b" font-size="10">to Kubernetes</text>
-
-  <text x="62" y="244" fill="#475569" font-size="9">✦  Watches GitHub for changes</text>
-  <text x="62" y="260" fill="#475569" font-size="9">✦  Syncs &amp; records every deploy</text>
-  <text x="62" y="276" fill="#475569" font-size="9">✦  Exposes raw metrics</text>
+  <use href="#logo-argocd" transform="translate(145,136)"/>
+  <text x="145" y="178" text-anchor="middle" fill="#3b82f6" font-size="13" font-weight="700">ArgoCD</text>
+  <text x="145" y="196" text-anchor="middle" fill="#64748b" font-size="10">Deploys your apps</text>
+  <text x="145" y="211" text-anchor="middle" fill="#64748b" font-size="10">to Kubernetes</text>
+  <text x="62" y="237" fill="#475569" font-size="9">✦  Watches GitHub for changes</text>
+  <text x="62" y="253" fill="#475569" font-size="9">✦  Syncs &amp; records every deploy</text>
+  <text x="62" y="269" fill="#475569" font-size="9">✦  Exposes raw metrics</text>
 
   <!-- ══════ ARROW 1 ══════ -->
-  <line x1="253" y1="193" x2="308" y2="193" stroke="#2563eb" stroke-width="2.5"/>
-  <polygon points="308,187 322,193 308,199" fill="#2563eb"/>
-  <text x="287" y="183" text-anchor="middle" fill="#475569" font-size="8.5">scrapes</text>
-  <text x="287" y="208" text-anchor="middle" fill="#334155" font-size="8">every 30s</text>
+  <line x1="253" y1="190" x2="308" y2="190" stroke="#2563eb" stroke-width="2.5"/>
+  <polygon points="308,184 322,190 308,196" fill="#2563eb"/>
+  <text x="287" y="180" text-anchor="middle" fill="#475569" font-size="8.5">scrapes</text>
+  <text x="287" y="205" text-anchor="middle" fill="#334155" font-size="8">every 30s</text>
 
   <!-- ══════ BOX 2: Prometheus ══════ -->
   <rect x="325" y="88" width="210" height="210" rx="16" fill="#1a0a2e" stroke="#7c3aed" stroke-width="2"/>
-
-  <!-- Prometheus logo -->
-  <circle cx="430" cy="136" r="30" fill="#2d1b5e"/>
-  <image href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/prometheus/prometheus-original.svg"
-         x="400" y="106" width="60" height="60"/>
-
-  <text x="430" y="186" text-anchor="middle" fill="#a78bfa" font-size="13" font-weight="700">Prometheus</text>
-  <text x="430" y="203" text-anchor="middle" fill="#64748b" font-size="10">Stores &amp; calculates</text>
-  <text x="430" y="218" text-anchor="middle" fill="#64748b" font-size="10">DORA metrics</text>
-
-  <text x="345" y="244" fill="#475569" font-size="9">✦  Stores time-series data</text>
-  <text x="345" y="260" fill="#475569" font-size="9">✦  Computes deploy frequency</text>
-  <text x="345" y="276" fill="#475569" font-size="9">✦  Calculates failure rates</text>
+  <use href="#logo-prometheus" transform="translate(430,136)"/>
+  <text x="430" y="178" text-anchor="middle" fill="#a78bfa" font-size="13" font-weight="700">Prometheus</text>
+  <text x="430" y="196" text-anchor="middle" fill="#64748b" font-size="10">Stores &amp; calculates</text>
+  <text x="430" y="211" text-anchor="middle" fill="#64748b" font-size="10">DORA metrics</text>
+  <text x="345" y="237" fill="#475569" font-size="9">✦  Stores time-series data</text>
+  <text x="345" y="253" fill="#475569" font-size="9">✦  Computes deploy frequency</text>
+  <text x="345" y="269" fill="#475569" font-size="9">✦  Calculates failure rates</text>
 
   <!-- ══════ ARROW 2 ══════ -->
-  <line x1="538" y1="193" x2="593" y2="193" stroke="#7c3aed" stroke-width="2.5"/>
-  <polygon points="593,187 607,193 593,199" fill="#7c3aed"/>
-  <text x="572" y="183" text-anchor="middle" fill="#475569" font-size="8.5">queries</text>
-  <text x="572" y="208" text-anchor="middle" fill="#334155" font-size="8">on demand</text>
+  <line x1="538" y1="190" x2="593" y2="190" stroke="#7c3aed" stroke-width="2.5"/>
+  <polygon points="593,184 607,190 593,196" fill="#7c3aed"/>
+  <text x="572" y="180" text-anchor="middle" fill="#475569" font-size="8.5">queries</text>
+  <text x="572" y="205" text-anchor="middle" fill="#334155" font-size="8">on demand</text>
 
   <!-- ══════ BOX 3: Grafana ══════ -->
   <rect x="610" y="88" width="210" height="210" rx="16" fill="#0f2318" stroke="#16a34a" stroke-width="2"/>
-
-  <!-- Grafana logo -->
-  <circle cx="715" cy="136" r="30" fill="#14532d"/>
-  <image href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/grafana/grafana-original.svg"
-         x="685" y="106" width="60" height="60"/>
-
-  <text x="715" y="186" text-anchor="middle" fill="#4ade80" font-size="13" font-weight="700">Grafana</text>
-  <text x="715" y="203" text-anchor="middle" fill="#64748b" font-size="10">Shows you the</text>
-  <text x="715" y="218" text-anchor="middle" fill="#64748b" font-size="10">DORA dashboard</text>
-
-  <text x="630" y="244" fill="#475569" font-size="9">✦  Deploy frequency chart</text>
-  <text x="630" y="260" fill="#475569" font-size="9">✦  Change failure rate</text>
-  <text x="630" y="276" fill="#475569" font-size="9">✦  Lead time &amp; app health</text>
+  <use href="#logo-grafana" transform="translate(715,136)"/>
+  <text x="715" y="178" text-anchor="middle" fill="#4ade80" font-size="13" font-weight="700">Grafana</text>
+  <text x="715" y="196" text-anchor="middle" fill="#64748b" font-size="10">Shows you the</text>
+  <text x="715" y="211" text-anchor="middle" fill="#64748b" font-size="10">DORA dashboard</text>
+  <text x="630" y="237" fill="#475569" font-size="9">✦  Deploy frequency chart</text>
+  <text x="630" y="253" fill="#475569" font-size="9">✦  Change failure rate</text>
+  <text x="630" y="269" fill="#475569" font-size="9">✦  Lead time &amp; app health</text>
 
   <!-- ══════ DORA METRICS STRIP ══════ -->
-  <rect x="40" y="322" width="780" height="56" rx="10" fill="#0d1117" stroke="#1e293b" stroke-width="1"/>
-  <text x="430" y="342" text-anchor="middle" fill="#475569" font-size="9" font-weight="600">WHAT YOU SEE ON THE DASHBOARD</text>
-
-  <rect x="58" y="350" width="170" height="20" rx="5" fill="#14532d"/>
-  <text x="143" y="364" text-anchor="middle" fill="#6ee7b7" font-size="9" font-weight="600">🟢  How often we ship</text>
-
-  <rect x="240" y="350" width="170" height="20" rx="5" fill="#78350f"/>
-  <text x="325" y="364" text-anchor="middle" fill="#fde68a" font-size="9" font-weight="600">🟡  How often deploys fail</text>
-
-  <rect x="422" y="350" width="170" height="20" rx="5" fill="#1e3a5f"/>
-  <text x="507" y="364" text-anchor="middle" fill="#93c5fd" font-size="9" font-weight="600">🔵  How fast we deliver</text>
-
-  <rect x="604" y="350" width="200" height="20" rx="5" fill="#2d1b5e"/>
-  <text x="704" y="364" text-anchor="middle" fill="#c4b5fd" font-size="9" font-weight="600">🟣  How fast we recover</text>
+  <rect x="40" y="318" width="780" height="56" rx="10" fill="#0d1117" stroke="#1e293b" stroke-width="1"/>
+  <text x="430" y="338" text-anchor="middle" fill="#475569" font-size="9" font-weight="600">WHAT YOU SEE ON THE DASHBOARD</text>
+  <rect x="58" y="346" width="170" height="20" rx="5" fill="#14532d"/>
+  <text x="143" y="360" text-anchor="middle" fill="#6ee7b7" font-size="9" font-weight="600">🟢  How often we ship</text>
+  <rect x="240" y="346" width="170" height="20" rx="5" fill="#78350f"/>
+  <text x="325" y="360" text-anchor="middle" fill="#fde68a" font-size="9" font-weight="600">🟡  How often deploys fail</text>
+  <rect x="422" y="346" width="170" height="20" rx="5" fill="#1e3a5f"/>
+  <text x="507" y="360" text-anchor="middle" fill="#93c5fd" font-size="9" font-weight="600">🔵  How fast we deliver</text>
+  <rect x="604" y="346" width="200" height="20" rx="5" fill="#2d1b5e"/>
+  <text x="704" y="360" text-anchor="middle" fill="#c4b5fd" font-size="9" font-weight="600">🟣  How fast we recover</text>
 </svg>
