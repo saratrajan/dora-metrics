@@ -1,0 +1,177 @@
+<svg viewBox="0 0 1100 620" xmlns="http://www.w3.org/2000/svg" role="img" font-family="'Segoe UI', system-ui, sans-serif">
+  <title>CI/CD Evolution — Before vs After</title>
+  <desc>Before: monolithic serial ADO pipeline with siloed CI and detached CD. After: unified parallel pipeline with CI and CD in a single pane of glass.</desc>
+
+  <rect width="1100" height="620" fill="#0f1117"/>
+
+  <text x="550" y="34" text-anchor="middle" fill="#e2e8f0" font-size="17" font-weight="700">CI/CD Evolution — From Monolith to Modern</text>
+  <text x="550" y="52" text-anchor="middle" fill="#475569" font-size="10.5">Azure DevOps  ·  Serial Silos  →  Parallel Unified Pipeline</text>
+
+  <!-- BEFORE header -->
+  <rect x="22" y="64" width="498" height="26" rx="6" fill="#450a0a" stroke="#7f1d1d" stroke-width="1"/>
+  <text x="271" y="81" text-anchor="middle" fill="#fca5a5" font-size="10" font-weight="700" letter-spacing="1">BEFORE — Monolithic · Serial · Siloed</text>
+
+  <!-- CI outer box -->
+  <rect x="22" y="98" width="498" height="152" rx="10" fill="#1a0a0a" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="36" y="116" fill="#f87171" font-size="9.5" font-weight="700" letter-spacing="0.8">CI PIPELINE</text>
+  <text x="36" y="129" fill="#475569" font-size="8">Stages run one after another — each blocks the next</text>
+
+  <!-- Serial stages -->
+  <rect x="34" y="138" width="72" height="40" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+  <text x="70" y="155" text-anchor="middle" fill="#94a3b8" font-size="9" font-weight="600">🔨 BUILD</text>
+  <text x="70" y="169" text-anchor="middle" fill="#334155" font-size="7.5">compile</text>
+  <line x1="106" y1="158" x2="120" y2="158" stroke="#475569" stroke-width="1.5"/>
+  <polygon points="120,154 128,158 120,162" fill="#475569"/>
+
+  <rect x="128" y="138" width="72" height="40" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+  <text x="164" y="155" text-anchor="middle" fill="#94a3b8" font-size="9" font-weight="600">🧪 TEST</text>
+  <text x="164" y="169" text-anchor="middle" fill="#334155" font-size="7.5">unit + integration</text>
+  <line x1="200" y1="158" x2="214" y2="158" stroke="#475569" stroke-width="1.5"/>
+  <polygon points="214,154 222,158 214,162" fill="#475569"/>
+
+  <rect x="222" y="138" width="72" height="40" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+  <text x="258" y="155" text-anchor="middle" fill="#94a3b8" font-size="9" font-weight="600">🔍 SCAN</text>
+  <text x="258" y="169" text-anchor="middle" fill="#334155" font-size="7.5">security / SAST</text>
+  <line x1="294" y1="158" x2="308" y2="158" stroke="#475569" stroke-width="1.5"/>
+  <polygon points="308,154 316,158 308,162" fill="#475569"/>
+
+  <rect x="316" y="138" width="72" height="40" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+  <text x="352" y="155" text-anchor="middle" fill="#94a3b8" font-size="9" font-weight="600">📦 PUBLISH</text>
+  <text x="352" y="169" text-anchor="middle" fill="#334155" font-size="7.5">artifact store</text>
+  <line x1="388" y1="158" x2="402" y2="158" stroke="#475569" stroke-width="1.5"/>
+  <polygon points="402,154 410,158 402,162" fill="#475569"/>
+
+  <rect x="410" y="138" width="96" height="40" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+  <text x="458" y="155" text-anchor="middle" fill="#94a3b8" font-size="9" font-weight="600">🐳 DOCKERIZE</text>
+  <text x="458" y="169" text-anchor="middle" fill="#334155" font-size="7.5">build &amp; push image</text>
+
+  <text x="271" y="207" text-anchor="middle" fill="#7f1d1d" font-size="8.5">⏱  Any stage fails → entire pipeline restarts from scratch</text>
+  <text x="271" y="221" text-anchor="middle" fill="#7f1d1d" font-size="8.5">⏱  Sequential wait time compounds — slowest stage gates everything</text>
+  <text x="271" y="235" text-anchor="middle" fill="#7f1d1d" font-size="8.5">⏱  No parallelism — test + scan can't run simultaneously</text>
+
+  <!-- Broken link -->
+  <line x1="271" y1="250" x2="271" y2="278" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="3,3"/>
+  <text x="340" y="268" fill="#dc2626" font-size="9" font-weight="600">✂  Manual handoff · No linkage · Separate pipeline</text>
+  <text x="340" y="281" fill="#7f1d1d" font-size="8.5">CD must be triggered separately — no traceability to CI run</text>
+  <rect x="250" y="262" width="18" height="10" rx="2" fill="#7f1d1d" stroke="#dc2626" stroke-width="1"/>
+  <rect x="254" y="270" width="18" height="10" rx="2" fill="#7f1d1d" stroke="#dc2626" stroke-width="1" transform="rotate(30,263,275)"/>
+
+  <!-- CD outer box — detached -->
+  <rect x="22" y="288" width="498" height="90" rx="10" fill="#1a0d00" stroke="#b45309" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="36" y="306" fill="#fb923c" font-size="9.5" font-weight="700" letter-spacing="0.8">CD PIPELINE  <tspan fill="#475569" font-size="8" font-weight="400">— completely detached · manually triggered</tspan></text>
+  <rect x="34" y="314" width="240" height="48" rx="6" fill="#1e1008" stroke="#b45309" stroke-width="1"/>
+  <text x="154" y="333" text-anchor="middle" fill="#fb923c" font-size="9" font-weight="600">🚀  Deploy to Non-Prod</text>
+  <text x="154" y="348" text-anchor="middle" fill="#475569" font-size="8">Dev / QA / UAT — manual approvals between</text>
+  <text x="154" y="360" text-anchor="middle" fill="#334155" font-size="7.5">No preflight · No link back to CI artifact</text>
+  <rect x="294" y="314" width="212" height="48" rx="6" fill="#1a0a0a" stroke="#7f1d1d" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="400" y="336" text-anchor="middle" fill="#f87171" font-size="11">🧱  SILO</text>
+  <text x="400" y="353" text-anchor="middle" fill="#7f1d1d" font-size="8.5">CI + CD invisible to each other</text>
+  <text x="400" y="365" text-anchor="middle" fill="#7f1d1d" font-size="8">No shared context · No single view</text>
+
+  <!-- CENTER DIVIDER -->
+  <line x1="548" y1="64" x2="548" y2="530" stroke="#1e293b" stroke-width="1"/>
+  <circle cx="548" cy="240" r="22" fill="#0f1117" stroke="#334155" stroke-width="1.5"/>
+  <text x="548" y="244" text-anchor="middle" fill="#64748b" font-size="10" font-weight="700">VS</text>
+
+  <!-- AFTER header -->
+  <rect x="580" y="64" width="498" height="26" rx="6" fill="#052e16" stroke="#166534" stroke-width="1"/>
+  <text x="829" y="81" text-anchor="middle" fill="#86efac" font-size="10" font-weight="700" letter-spacing="1">AFTER — Unified · Parallel · Single Pane of Glass</text>
+
+  <!-- Unified outer box -->
+  <rect x="580" y="98" width="498" height="282" rx="10" fill="#040d0a" stroke="#16a34a" stroke-width="2"/>
+
+  <!-- CI section -->
+  <rect x="592" y="108" width="474" height="160" rx="8" fill="#0d1f18" stroke="#15803d" stroke-width="1"/>
+  <text x="606" y="126" fill="#4ade80" font-size="9.5" font-weight="700" letter-spacing="0.8">CI — PARALLEL MODULAR STAGES</text>
+  <text x="606" y="139" fill="#475569" font-size="8">All lanes run simultaneously — no blocking</text>
+
+  <!-- Lane 1 -->
+  <rect x="600" y="146" width="458" height="34" rx="5" fill="#0a1a10" stroke="#166534" stroke-width="0.8"/>
+  <text x="614" y="160" fill="#475569" font-size="7.5">Lane 1</text>
+  <rect x="636" y="150" width="68" height="24" rx="4" fill="#14532d" stroke="#16a34a" stroke-width="0.8"/>
+  <text x="670" y="166" text-anchor="middle" fill="#86efac" font-size="8" font-weight="600">🔨 BUILD</text>
+  <line x1="704" y1="162" x2="716" y2="162" stroke="#16a34a" stroke-width="1.2"/>
+  <polygon points="716,159 722,162 716,165" fill="#16a34a"/>
+  <rect x="722" y="150" width="68" height="24" rx="4" fill="#14532d" stroke="#16a34a" stroke-width="0.8"/>
+  <text x="756" y="166" text-anchor="middle" fill="#86efac" font-size="8" font-weight="600">🧪 TEST</text>
+
+  <!-- Lane 2 -->
+  <rect x="600" y="186" width="458" height="34" rx="5" fill="#0a1a10" stroke="#166534" stroke-width="0.8"/>
+  <text x="614" y="200" fill="#475569" font-size="7.5">Lane 2</text>
+  <rect x="636" y="190" width="90" height="24" rx="4" fill="#14532d" stroke="#16a34a" stroke-width="0.8"/>
+  <text x="681" y="206" text-anchor="middle" fill="#86efac" font-size="8" font-weight="600">🔍 SCAN / SAST</text>
+  <text x="760" y="206" fill="#334155" font-size="7.5">runs in parallel — doesn't block build</text>
+
+  <!-- Lane 3 -->
+  <rect x="600" y="226" width="458" height="34" rx="5" fill="#0a1a10" stroke="#166534" stroke-width="0.8"/>
+  <text x="614" y="240" fill="#475569" font-size="7.5">Lane 3</text>
+  <rect x="636" y="230" width="76" height="24" rx="4" fill="#14532d" stroke="#16a34a" stroke-width="0.8"/>
+  <text x="674" y="246" text-anchor="middle" fill="#86efac" font-size="8" font-weight="600">📦 PUBLISH</text>
+  <line x1="712" y1="242" x2="724" y2="242" stroke="#16a34a" stroke-width="1.2"/>
+  <polygon points="724,239 730,242 724,245" fill="#16a34a"/>
+  <rect x="730" y="230" width="84" height="24" rx="4" fill="#14532d" stroke="#16a34a" stroke-width="0.8"/>
+  <text x="772" y="246" text-anchor="middle" fill="#86efac" font-size="8" font-weight="600">🐳 DOCKERIZE</text>
+
+  <!-- Merge lines to gate -->
+  <line x1="830" y1="162" x2="1042" y2="162" stroke="#16a34a" stroke-width="0.8" stroke-dasharray="2,2"/>
+  <line x1="814" y1="202" x2="1042" y2="202" stroke="#16a34a" stroke-width="0.8" stroke-dasharray="2,2"/>
+  <line x1="1042" y1="162" x2="1042" y2="242" stroke="#16a34a" stroke-width="0.8" stroke-dasharray="2,2"/>
+  <line x1="830" y1="242" x2="1042" y2="242" stroke="#16a34a" stroke-width="0.8" stroke-dasharray="2,2"/>
+  <rect x="1042" y="192" width="10" height="20" rx="3" fill="#16a34a"/>
+  <polygon points="1052,197 1060,202 1052,207" fill="#16a34a"/>
+
+  <!-- CD section -->
+  <rect x="592" y="278" width="474" height="94" rx="8" fill="#0d1520" stroke="#2563eb" stroke-width="1"/>
+  <text x="606" y="296" fill="#60a5fa" font-size="9.5" font-weight="700" letter-spacing="0.8">CD — PLUGGED IN · AUTOMATED · SAME VIEW</text>
+  <text x="606" y="309" fill="#475569" font-size="8">No manual trigger · Picks up artifact directly from CI · Full traceability</text>
+
+  <rect x="606" y="316" width="76" height="46" rx="5" fill="#172033" stroke="#3b82f6" stroke-width="1"/>
+  <text x="644" y="335" text-anchor="middle" fill="#93c5fd" font-size="8" font-weight="600">✅ PRE</text>
+  <text x="644" y="347" text-anchor="middle" fill="#93c5fd" font-size="8" font-weight="600">FLIGHT</text>
+  <text x="644" y="358" text-anchor="middle" fill="#334155" font-size="7">checks</text>
+  <line x1="682" y1="339" x2="694" y2="339" stroke="#3b82f6" stroke-width="1.5"/>
+  <polygon points="694,335 702,339 694,343" fill="#3b82f6"/>
+
+  <rect x="702" y="316" width="68" height="46" rx="5" fill="#172033" stroke="#3b82f6" stroke-width="1"/>
+  <text x="736" y="335" text-anchor="middle" fill="#93c5fd" font-size="8" font-weight="600">🚀 DEV</text>
+  <text x="736" y="349" text-anchor="middle" fill="#334155" font-size="7">auto deploy</text>
+  <text x="736" y="359" text-anchor="middle" fill="#1d4ed8" font-size="7">automated</text>
+  <line x1="770" y1="339" x2="782" y2="339" stroke="#3b82f6" stroke-width="1.5"/>
+  <polygon points="782,335 790,339 782,343" fill="#3b82f6"/>
+
+  <rect x="790" y="316" width="68" height="46" rx="5" fill="#172033" stroke="#3b82f6" stroke-width="1"/>
+  <text x="824" y="335" text-anchor="middle" fill="#93c5fd" font-size="8" font-weight="600">🧪 QA</text>
+  <text x="824" y="349" text-anchor="middle" fill="#334155" font-size="7">auto deploy</text>
+  <text x="824" y="359" text-anchor="middle" fill="#1d4ed8" font-size="7">automated</text>
+  <line x1="858" y1="339" x2="870" y2="339" stroke="#3b82f6" stroke-width="1.5"/>
+  <polygon points="870,335 878,339 870,343" fill="#3b82f6"/>
+
+  <rect x="878" y="316" width="68" height="46" rx="5" fill="#172033" stroke="#3b82f6" stroke-width="1"/>
+  <text x="912" y="335" text-anchor="middle" fill="#93c5fd" font-size="8" font-weight="600">✔ UAT</text>
+  <text x="912" y="349" text-anchor="middle" fill="#334155" font-size="7">auto deploy</text>
+  <text x="912" y="359" text-anchor="middle" fill="#1d4ed8" font-size="7">automated</text>
+
+  <rect x="960" y="316" width="100" height="46" rx="5" fill="#0c1a3a" stroke="#1d4ed8" stroke-width="1"/>
+  <text x="1010" y="333" text-anchor="middle" fill="#60a5fa" font-size="8" font-weight="700">👁  SINGLE</text>
+  <text x="1010" y="346" text-anchor="middle" fill="#60a5fa" font-size="8" font-weight="700">PANE OF</text>
+  <text x="1010" y="359" text-anchor="middle" fill="#60a5fa" font-size="8" font-weight="700">GLASS</text>
+
+  <!-- Bottom comparison -->
+  <rect x="22" y="406" width="498" height="86" rx="8" fill="#0d1117" stroke="#1e293b" stroke-width="1"/>
+  <text x="271" y="424" text-anchor="middle" fill="#7f1d1d" font-size="9" font-weight="600">PAIN POINTS</text>
+  <text x="40" y="442" fill="#475569" font-size="8.5">❌  CI and CD are invisible to each other</text>
+  <text x="40" y="457" fill="#475569" font-size="8.5">❌  Serial stages — build + scan can't run together</text>
+  <text x="40" y="472" fill="#475569" font-size="8.5">❌  Manual trigger between CI completion and CD start</text>
+  <text x="40" y="487" fill="#475569" font-size="8.5">❌  No preflight checks before deployment</text>
+
+  <rect x="580" y="406" width="498" height="86" rx="8" fill="#0d1117" stroke="#1e293b" stroke-width="1"/>
+  <text x="829" y="424" text-anchor="middle" fill="#166534" font-size="9" font-weight="600">GAINS</text>
+  <text x="598" y="442" fill="#475569" font-size="8.5">✅  CI + CD in one pipeline — full traceability end to end</text>
+  <text x="598" y="457" fill="#475569" font-size="8.5">✅  Parallel lanes — build, scan, publish run simultaneously</text>
+  <text x="598" y="472" fill="#475569" font-size="8.5">✅  CD auto-triggered on CI success — zero manual handoff</text>
+  <text x="598" y="487" fill="#475569" font-size="8.5">✅  Preflight checks gate every non-prod deployment</text>
+
+  <!-- Footer -->
+  <rect x="22" y="506" width="1056" height="28" rx="6" fill="#0d1117" stroke="#1e293b" stroke-width="1"/>
+  <text x="550" y="524" text-anchor="middle" fill="#334155" font-size="8.5">All non-prod deployments (Dev · QA · UAT) are now fully automated — no human required between environments</text>
+</svg>
