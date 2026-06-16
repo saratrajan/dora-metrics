@@ -1,4 +1,4 @@
-<svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" role="img" font-family="'Segoe UI', system-ui, sans-serif">
+<svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" font-family="'Segoe UI', system-ui, sans-serif">
   <title>DORA Metrics — Simple Overview</title>
   <desc>Simple layman-friendly diagram showing how deployment data flows from ArgoCD to Prometheus to Grafana.</desc>
 
@@ -12,18 +12,18 @@
   <!-- ══════ BOX 1: ArgoCD ══════ -->
   <rect x="40" y="88" width="210" height="210" rx="16" fill="#0d1f35" stroke="#2563eb" stroke-width="2"/>
 
-  <!-- Icon circle -->
-  <circle cx="145" cy="136" r="28" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
-  <text x="145" y="143" text-anchor="middle" fill="#93c5fd" font-size="22">🚀</text>
+  <!-- ArgoCD logo -->
+  <circle cx="145" cy="136" r="30" fill="#1e3a5f"/>
+  <image href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/argocd/argocd-original.svg"
+         x="115" y="106" width="60" height="60"/>
 
-  <text x="145" y="182" text-anchor="middle" fill="#3b82f6" font-size="13" font-weight="700">ArgoCD</text>
-  <text x="145" y="200" text-anchor="middle" fill="#64748b" font-size="10">Deploys your apps</text>
-  <text x="145" y="216" text-anchor="middle" fill="#64748b" font-size="10">to Kubernetes</text>
+  <text x="145" y="186" text-anchor="middle" fill="#3b82f6" font-size="13" font-weight="700">ArgoCD</text>
+  <text x="145" y="203" text-anchor="middle" fill="#64748b" font-size="10">Deploys your apps</text>
+  <text x="145" y="218" text-anchor="middle" fill="#64748b" font-size="10">to Kubernetes</text>
 
-  <!-- Bullet facts -->
-  <text x="62" y="242" fill="#475569" font-size="9">✦  Watches GitHub for changes</text>
-  <text x="62" y="258" fill="#475569" font-size="9">✦  Syncs &amp; records every deploy</text>
-  <text x="62" y="274" fill="#475569" font-size="9">✦  Exposes raw metrics</text>
+  <text x="62" y="244" fill="#475569" font-size="9">✦  Watches GitHub for changes</text>
+  <text x="62" y="260" fill="#475569" font-size="9">✦  Syncs &amp; records every deploy</text>
+  <text x="62" y="276" fill="#475569" font-size="9">✦  Exposes raw metrics</text>
 
   <!-- ══════ ARROW 1 ══════ -->
   <line x1="253" y1="193" x2="308" y2="193" stroke="#2563eb" stroke-width="2.5"/>
@@ -34,16 +34,18 @@
   <!-- ══════ BOX 2: Prometheus ══════ -->
   <rect x="325" y="88" width="210" height="210" rx="16" fill="#1a0a2e" stroke="#7c3aed" stroke-width="2"/>
 
-  <circle cx="430" cy="136" r="28" fill="#2d1b5e" stroke="#7c3aed" stroke-width="1.5"/>
-  <text x="430" y="143" text-anchor="middle" fill="#c4b5fd" font-size="22">📊</text>
+  <!-- Prometheus logo -->
+  <circle cx="430" cy="136" r="30" fill="#2d1b5e"/>
+  <image href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/prometheus/prometheus-original.svg"
+         x="400" y="106" width="60" height="60"/>
 
-  <text x="430" y="182" text-anchor="middle" fill="#a78bfa" font-size="13" font-weight="700">Prometheus</text>
-  <text x="430" y="200" text-anchor="middle" fill="#64748b" font-size="10">Stores &amp; calculates</text>
-  <text x="430" y="216" text-anchor="middle" fill="#64748b" font-size="10">DORA metrics</text>
+  <text x="430" y="186" text-anchor="middle" fill="#a78bfa" font-size="13" font-weight="700">Prometheus</text>
+  <text x="430" y="203" text-anchor="middle" fill="#64748b" font-size="10">Stores &amp; calculates</text>
+  <text x="430" y="218" text-anchor="middle" fill="#64748b" font-size="10">DORA metrics</text>
 
-  <text x="345" y="242" fill="#475569" font-size="9">✦  Stores time-series data</text>
-  <text x="345" y="258" fill="#475569" font-size="9">✦  Computes deploy frequency</text>
-  <text x="345" y="274" fill="#475569" font-size="9">✦  Calculates failure rates</text>
+  <text x="345" y="244" fill="#475569" font-size="9">✦  Stores time-series data</text>
+  <text x="345" y="260" fill="#475569" font-size="9">✦  Computes deploy frequency</text>
+  <text x="345" y="276" fill="#475569" font-size="9">✦  Calculates failure rates</text>
 
   <!-- ══════ ARROW 2 ══════ -->
   <line x1="538" y1="193" x2="593" y2="193" stroke="#7c3aed" stroke-width="2.5"/>
@@ -54,23 +56,23 @@
   <!-- ══════ BOX 3: Grafana ══════ -->
   <rect x="610" y="88" width="210" height="210" rx="16" fill="#0f2318" stroke="#16a34a" stroke-width="2"/>
 
-  <circle cx="715" cy="136" r="28" fill="#14532d" stroke="#16a34a" stroke-width="1.5"/>
-  <text x="715" y="143" text-anchor="middle" fill="#4ade80" font-size="22">📈</text>
+  <!-- Grafana logo -->
+  <circle cx="715" cy="136" r="30" fill="#14532d"/>
+  <image href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/grafana/grafana-original.svg"
+         x="685" y="106" width="60" height="60"/>
 
-  <text x="715" y="182" text-anchor="middle" fill="#4ade80" font-size="13" font-weight="700">Grafana</text>
-  <text x="715" y="200" text-anchor="middle" fill="#64748b" font-size="10">Shows you the</text>
-  <text x="715" y="216" text-anchor="middle" fill="#64748b" font-size="10">DORA dashboard</text>
+  <text x="715" y="186" text-anchor="middle" fill="#4ade80" font-size="13" font-weight="700">Grafana</text>
+  <text x="715" y="203" text-anchor="middle" fill="#64748b" font-size="10">Shows you the</text>
+  <text x="715" y="218" text-anchor="middle" fill="#64748b" font-size="10">DORA dashboard</text>
 
-  <text x="630" y="242" fill="#475569" font-size="9">✦  Deploy frequency chart</text>
-  <text x="630" y="258" fill="#475569" font-size="9">✦  Change failure rate</text>
-  <text x="630" y="274" fill="#475569" font-size="9">✦  Lead time &amp; app health</text>
+  <text x="630" y="244" fill="#475569" font-size="9">✦  Deploy frequency chart</text>
+  <text x="630" y="260" fill="#475569" font-size="9">✦  Change failure rate</text>
+  <text x="630" y="276" fill="#475569" font-size="9">✦  Lead time &amp; app health</text>
 
   <!-- ══════ DORA METRICS STRIP ══════ -->
   <rect x="40" y="322" width="780" height="56" rx="10" fill="#0d1117" stroke="#1e293b" stroke-width="1"/>
-
   <text x="430" y="342" text-anchor="middle" fill="#475569" font-size="9" font-weight="600">WHAT YOU SEE ON THE DASHBOARD</text>
 
-  <!-- 4 metrics -->
   <rect x="58" y="350" width="170" height="20" rx="5" fill="#14532d"/>
   <text x="143" y="364" text-anchor="middle" fill="#6ee7b7" font-size="9" font-weight="600">🟢  How often we ship</text>
 

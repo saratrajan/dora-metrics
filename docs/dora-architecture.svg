@@ -1,15 +1,9 @@
-<svg viewBox="0 0 960 640" xmlns="http://www.w3.org/2000/svg" role="img" font-family="'Segoe UI', system-ui, sans-serif">
+<svg viewBox="0 0 960 560" xmlns="http://www.w3.org/2000/svg" role="img" font-family="'Segoe UI', system-ui, sans-serif">
   <title>DORA Metrics Data Flow</title>
   <desc>Architecture diagram showing how ArgoCD metrics flow through Prometheus recording rules to a Grafana dashboard displaying DORA metrics.</desc>
 
-  <defs>
-    <clipPath id="clip-argocd"><rect x="32" y="82" width="244" height="332"/></clipPath>
-    <clipPath id="clip-prometheus"><rect x="500" y="82" width="226" height="332"/></clipPath>
-    <clipPath id="clip-grafana"><rect x="762" y="82" width="170" height="332"/></clipPath>
-  </defs>
-
   <!-- Background -->
-  <rect width="960" height="640" fill="#0f1117"/>
+  <rect width="960" height="560" fill="#0f1117"/>
 
   <!-- Title -->
   <text x="480" y="38" text-anchor="middle" fill="#e2e8f0" font-size="18" font-weight="700" letter-spacing="0.5">DORA Metrics — Observability Pipeline</text>
@@ -126,50 +120,38 @@
   <text x="861" y="374" text-anchor="middle" fill="#475569" font-size="7.5">table</text>
 
   <!-- ══════════════════════════════════════════════ -->
-  <!-- GitHub GitOps -->
+  <!-- Legend row -->
   <!-- ══════════════════════════════════════════════ -->
-  <rect x="376" y="460" width="200" height="54" rx="10" fill="#0d1117" stroke="#30363d" stroke-width="1.5"/>
-  <text x="476" y="482" text-anchor="middle" fill="#8b949e" font-size="10" font-weight="600">⬡  GitHub (main branch)</text>
-  <text x="476" y="497" text-anchor="middle" fill="#475569" font-size="8.5">dora-metrics repo</text>
-  <text x="476" y="509" text-anchor="middle" fill="#334155" font-size="7.5">manifests · charts · prometheusrule</text>
 
-  <line x1="376" y1="487" x2="205" y2="424" stroke="#30363d" stroke-width="1.2" stroke-dasharray="4,3"/>
-  <polygon points="203,430 199,421 209,422" fill="#30363d"/>
-  <text x="270" y="466" text-anchor="middle" fill="#334155" font-size="8" transform="rotate(-22,270,466)">GitOps pull</text>
+  <!-- Data Flow legend -->
+  <rect x="30" y="438" width="290" height="96" rx="8" fill="#0d1117" stroke="#1e293b" stroke-width="1"/>
+  <text x="46" y="458" fill="#64748b" font-size="9.5" font-weight="600">DATA FLOW</text>
+  <line x1="46" y1="473" x2="78" y2="473" stroke="#1d4ed8" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <polygon points="78,469 86,473 78,477" fill="#1d4ed8"/>
+  <text x="94" y="477" fill="#94a3b8" font-size="9">Prometheus scrape (pull model, 30s)</text>
+  <line x1="46" y1="493" x2="78" y2="493" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <polygon points="78,489 86,493 78,497" fill="#7c3aed"/>
+  <text x="94" y="497" fill="#94a3b8" font-size="9">PromQL query (on-demand)</text>
 
-  <line x1="576" y1="487" x2="622" y2="424" stroke="#30363d" stroke-width="1.2" stroke-dasharray="4,3"/>
-  <polygon points="626,430 630,421 620,422" fill="#30363d"/>
-  <text x="610" y="466" text-anchor="middle" fill="#334155" font-size="8" transform="rotate(22,610,466)">GitOps pull</text>
+  <!-- DORA Metrics legend — widened to 610px, text shortened -->
+  <rect x="340" y="438" width="595" height="96" rx="8" fill="#0d1117" stroke="#1e293b" stroke-width="1"/>
+  <text x="356" y="458" fill="#64748b" font-size="9.5" font-weight="600">DORA METRICS</text>
 
-  <!-- ══════════════════════════════════════════════ -->
-  <!-- Legend left -->
-  <!-- ══════════════════════════════════════════════ -->
-  <rect x="30" y="460" width="308" height="90" rx="8" fill="#0d1117" stroke="#1e293b" stroke-width="1"/>
-  <text x="46" y="481" fill="#64748b" font-size="9.5" font-weight="600">DATA FLOW</text>
+  <rect x="356" y="466" width="8" height="8" rx="2" fill="#6ee7b7"/>
+  <text x="370" y="475" fill="#94a3b8" font-size="9">Deployment Frequency</text>
+  <text x="490" y="475" fill="#475569" font-size="8.5">24h sync count</text>
 
-  <line x1="46" y1="496" x2="78" y2="496" stroke="#1d4ed8" stroke-width="1.5" stroke-dasharray="5,3"/>
-  <polygon points="78,492 86,496 78,500" fill="#1d4ed8"/>
-  <text x="94" y="500" fill="#94a3b8" font-size="9">Prometheus scrape (pull model, 30s)</text>
+  <rect x="356" y="483" width="8" height="8" rx="2" fill="#fbbf24"/>
+  <text x="370" y="492" fill="#94a3b8" font-size="9">Change Failure Rate</text>
+  <text x="490" y="492" fill="#475569" font-size="8.5">7-day window</text>
 
-  <line x1="46" y1="516" x2="78" y2="516" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="5,3"/>
-  <polygon points="78,512 86,516 78,520" fill="#7c3aed"/>
-  <text x="94" y="520" fill="#94a3b8" font-size="9">PromQL query (on-demand)</text>
+  <rect x="356" y="500" width="8" height="8" rx="2" fill="#f87171"/>
+  <text x="370" y="509" fill="#94a3b8" font-size="9">Lead Time P95</text>
+  <text x="490" y="509" fill="#475569" font-size="8.5">reconcile duration proxy</text>
 
-  <line x1="46" y1="536" x2="78" y2="536" stroke="#30363d" stroke-width="1.2" stroke-dasharray="4,3"/>
-  <polygon points="76,532 84,536 76,540" fill="#30363d"/>
-  <text x="94" y="540" fill="#94a3b8" font-size="9">GitOps sync (ArgoCD watches repo)</text>
-
-  <!-- Legend right -->
-  <rect x="622" y="460" width="313" height="90" rx="8" fill="#0d1117" stroke="#1e293b" stroke-width="1"/>
-  <text x="638" y="481" fill="#64748b" font-size="9.5" font-weight="600">DORA METRICS</text>
-  <rect x="638" y="490" width="8" height="8" rx="2" fill="#6ee7b7"/>
-  <text x="653" y="499" fill="#94a3b8" font-size="9">Deployment Frequency  (24h syncs)</text>
-  <rect x="638" y="508" width="8" height="8" rx="2" fill="#fbbf24"/>
-  <text x="653" y="517" fill="#94a3b8" font-size="9">Change Failure Rate  (7d window)</text>
-  <rect x="638" y="526" width="8" height="8" rx="2" fill="#f87171"/>
-  <text x="653" y="535" fill="#94a3b8" font-size="9">Lead Time P95  (reconcile proxy)</text>
-  <rect x="638" y="544" width="8" height="8" rx="2" fill="#a78bfa"/>
-  <text x="653" y="553" fill="#94a3b8" font-size="9">MTTR Proxy  (unhealthy duration)</text>
+  <rect x="356" y="517" width="8" height="8" rx="2" fill="#a78bfa"/>
+  <text x="370" y="526" fill="#94a3b8" font-size="9">MTTR Proxy</text>
+  <text x="490" y="526" fill="#475569" font-size="8.5">unhealthy app duration</text>
 
   <!-- Separator lines -->
   <line x1="280" y1="86" x2="280" y2="408" stroke="#1e293b" stroke-width="0.5"/>
@@ -177,8 +159,8 @@
   <line x1="787" y1="86" x2="787" y2="408" stroke="#1e293b" stroke-width="0.5"/>
 
   <!-- Layer labels -->
-  <text x="155" y="424" text-anchor="middle" fill="#1d4ed8" font-size="8.5" font-weight="600">① SOURCE</text>
-  <text x="399" y="424" text-anchor="middle" fill="#1d4ed8" font-size="8.5" font-weight="600">② COLLECT</text>
-  <text x="623" y="424" text-anchor="middle" fill="#7c3aed" font-size="8.5" font-weight="600">③ COMPUTE</text>
-  <text x="861" y="424" text-anchor="middle" fill="#16a34a" font-size="8.5" font-weight="600">④ VISUALISE</text>
+  <text x="155" y="422" text-anchor="middle" fill="#1d4ed8" font-size="8.5" font-weight="600">① SOURCE</text>
+  <text x="399" y="422" text-anchor="middle" fill="#1d4ed8" font-size="8.5" font-weight="600">② COLLECT</text>
+  <text x="623" y="422" text-anchor="middle" fill="#7c3aed" font-size="8.5" font-weight="600">③ COMPUTE</text>
+  <text x="861" y="422" text-anchor="middle" fill="#16a34a" font-size="8.5" font-weight="600">④ VISUALISE</text>
 </svg>
