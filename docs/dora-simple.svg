@@ -1,100 +1,58 @@
-<svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" role="img" font-family="'Segoe UI', system-ui, sans-serif">
+﻿<svg viewBox="0 0 860 400" xmlns="http://www.w3.org/2000/svg" role="img" font-family="'Segoe UI', system-ui, sans-serif">
   <title>DORA Metrics — Simple Overview</title>
   <desc>Simple layman-friendly diagram showing how deployment data flows from ArgoCD to Prometheus to Grafana.</desc>
 
-  <defs>
-    <!-- ArgoCD logo (compass / gear style) -->
-    <g id="logo-argocd">
-      <circle r="22" fill="#1e3a5f" stroke="#3b82f6" stroke-width="2"/>
-      <!-- outer ring ticks -->
-      <circle r="18" fill="none" stroke="#60a5fa" stroke-width="1.2" stroke-dasharray="3,3.5"/>
-      <!-- compass arms -->
-      <line x1="0" y1="-18" x2="0" y2="-7"  stroke="#93c5fd" stroke-width="2.5" stroke-linecap="round"/>
-      <line x1="0"  y1="7"  x2="0"  y2="18" stroke="#93c5fd" stroke-width="2.5" stroke-linecap="round"/>
-      <line x1="-18" y1="0" x2="-7" y2="0"  stroke="#93c5fd" stroke-width="2.5" stroke-linecap="round"/>
-      <line x1="7"  y1="0"  x2="18" y2="0"  stroke="#93c5fd" stroke-width="2.5" stroke-linecap="round"/>
-      <!-- center hub -->
-      <circle r="5" fill="#3b82f6"/>
-      <circle r="2.5" fill="#bfdbfe"/>
-    </g>
-
-    <!-- Prometheus logo (flame) -->
-    <g id="logo-prometheus">
-      <circle r="22" fill="#1a0a2e" stroke="#e6522c" stroke-width="2"/>
-      <!-- outer flame -->
-      <path d="M0,-17 C-3,-10 -11,-4 -9,7 C-7,15 0,19 0,19 C0,19 7,15 9,7 C11,-4 3,-10 0,-17Z"
-            fill="#e6522c"/>
-      <!-- inner highlight -->
-      <path d="M0,-8 C-2,-4 -5,1 -4,7 C-3,11 0,13 0,13 C0,13 3,11 4,7 C5,1 2,-4 0,-8Z"
-            fill="#f5a623"/>
-      <!-- tiny bright core -->
-      <ellipse cx="0" cy="9" rx="2" ry="3" fill="#fde68a"/>
-    </g>
-
-    <!-- Grafana logo (orange G) -->
-    <g id="logo-grafana">
-      <circle r="22" fill="#1a1a1a" stroke="#f46800" stroke-width="2"/>
-      <!-- orange filled semicircle (the Grafana "G" shape) -->
-      <path d="M0,-16 A16,16 0 1,1 -0.1,-16 Z" fill="#f46800" opacity="0.15"/>
-      <!-- bold arc -->
-      <path d="M14,0 A14,14 0 1,1 0,-14" fill="none" stroke="#f46800" stroke-width="4.5" stroke-linecap="round"/>
-      <!-- horizontal bar of G -->
-      <line x1="0" y1="0" x2="14" y2="0" stroke="#f46800" stroke-width="4.5" stroke-linecap="round"/>
-      <!-- vertical drop -->
-      <line x1="14" y1="0" x2="14" y2="7" stroke="#f46800" stroke-width="4.5" stroke-linecap="round"/>
-    </g>
-  </defs>
-
-  <!-- Background -->
   <rect width="860" height="400" fill="#0f1117"/>
 
-  <!-- Title -->
   <text x="430" y="36" text-anchor="middle" fill="#e2e8f0" font-size="17" font-weight="700">How We Measure Engineering Performance</text>
   <text x="430" y="56" text-anchor="middle" fill="#475569" font-size="11">Every deployment is automatically tracked — no manual logging</text>
 
-  <!-- ══════ BOX 1: ArgoCD ══════ -->
+  <!-- BOX 1: ArgoCD -->
   <rect x="40" y="88" width="210" height="210" rx="16" fill="#0d1f35" stroke="#2563eb" stroke-width="2"/>
-  <use href="#logo-argocd" transform="translate(145,136)"/>
-  <text x="145" y="178" text-anchor="middle" fill="#3b82f6" font-size="13" font-weight="700">ArgoCD</text>
-  <text x="145" y="196" text-anchor="middle" fill="#64748b" font-size="10">Deploys your apps</text>
-  <text x="145" y="211" text-anchor="middle" fill="#64748b" font-size="10">to Kubernetes</text>
-  <text x="62" y="237" fill="#475569" font-size="9">✦  Watches GitHub for changes</text>
-  <text x="62" y="253" fill="#475569" font-size="9">✦  Syncs &amp; records every deploy</text>
-  <text x="62" y="269" fill="#475569" font-size="9">✦  Exposes raw metrics</text>
+  <image href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2aWV3Qm94PSIwIDAgMTI4IDEyOCI+PGRlZnM+PGNsaXBQYXRoIGlkPSJhcmdvY2Qtb3JpZ2luYWwtZSI+PHBhdGggZD0iTTQyIDQxaDQ0djUxSDQyem0wIDAiLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iYXJnb2NkLW9yaWdpbmFsLWQiPjxwYXRoIGQ9Ik0wIDBoMTI4djEyOEgweiIvPjwvY2xpcFBhdGg+PGNsaXBQYXRoIGlkPSJhcmdvY2Qtb3JpZ2luYWwtYyI+PHBhdGggZD0iTTAgMGgxMjh2MTI4SDB6Ii8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9ImFyZ29jZC1vcmlnaW5hbC1mIj48cGF0aCBkPSJNODUuNjk1IDQxLjEzM2wtMi41NSA1OC4yMzhINDQuODg3bC0yLjEyNS01OC4yMzgiLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iYXJnb2NkLW9yaWdpbmFsLWIiPjxwYXRoIGQ9Ik0wIDBoMTI4djEyOEgweiIvPjwvY2xpcFBhdGg+PG1hc2sgaWQ9ImFyZ29jZC1vcmlnaW5hbC1sIj48ZyBmaWx0ZXI9InVybCgjYXJnb2NkLW9yaWdpbmFsLWEpIj48cGF0aCBkPSJNMCAwaDEyOHYxMjhIMHoiIGZpbGwtb3BhY2l0eT0iLjI1MSIvPjwvZz48L21hc2s+PG1hc2sgaWQ9ImFyZ29jZC1vcmlnaW5hbC1oIj48ZyBmaWx0ZXI9InVybCgjYXJnb2NkLW9yaWdpbmFsLWEpIj48cGF0aCBkPSJNMCAwaDEyOHYxMjhIMHoiIGZpbGwtb3BhY2l0eT0iLjIyIi8+PC9nPjwvbWFzaz48bWFzayBpZD0iYXJnb2NkLW9yaWdpbmFsLWoiPjxnIGZpbHRlcj0idXJsKCNhcmdvY2Qtb3JpZ2luYWwtYSkiPjxwYXRoIGQ9Ik0wIDBoMTI4djEyOEgweiIgZmlsbC1vcGFjaXR5PSIuNTAyIi8+PC9nPjwvbWFzaz48ZyBpZD0iYXJnb2NkLW9yaWdpbmFsLWkiIGNsaXAtcGF0aD0idXJsKCNhcmdvY2Qtb3JpZ2luYWwtYikiPjxwYXRoIGQ9Ik01OC40ODggMzAuNTA4YTIuOTc0IDIuOTc0IDAgMTEtNS45NDgtLjAwMyAyLjk3NCAyLjk3NCAwIDAxNS45NDguMDAzem0wIDAiIGZpbGw9IiNmYmRmYzMiLz48L2c+PGcgaWQ9ImFyZ29jZC1vcmlnaW5hbC1nIiBjbGlwLXBhdGg9InVybCgjYXJnb2NkLW9yaWdpbmFsLWMpIj48cGF0aCBkPSJNODQuNDIyIDY1LjM2M3MyLjU1LTIyLjUzMS0uODUyLTMxLjAzMUM3Ny4xOTUgMTkuNDUzIDYyLjMxNiAyMC43MyA2Mi4zMTYgMjAuNzNzOC41IDMuMzk5IDguOTI2IDE2LjE1M2MuNDI2IDguOTI2IDAgMjIuMTA1IDAgMjIuMTA1em0wIDAiIGZpbGw9IiNlMzRlM2IiLz48L2c+PGcgaWQ9ImFyZ29jZC1vcmlnaW5hbC1rIiBjbGlwLXBhdGg9InVybCgjYXJnb2NkLW9yaWdpbmFsLWQpIj48cGF0aCBkPSJNODMuMTQ1IDkwLjg2N1Y4Ny40N2MtNS45NSAzLjM5OC0xMi4zMjkgNi44LTE5Ljk3NyA2LjgtOC41MDQgMC0xNC4wMzEtMy44MjQtMTkuNTU1LTYuOGwuNDIyIDMuMzk4czYuMzggNi44MDUgMTkuNTU1IDYuODA1YzEyLjMyOC0uNDI2IDE5LjU1NS02LjgwNSAxOS41NTUtNi44MDV6bTAgMCIgZmlsbD0iI2U5NjU0YiIvPjwvZz48ZmlsdGVyIGlkPSJhcmdvY2Qtb3JpZ2luYWwtYSIgZmlsdGVyVW5pdHM9Im9iamVjdEJvdW5kaW5nQm94IiB4PSIwJSIgeT0iMCUiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxmZUNvbG9yTWF0cml4IGluPSJTb3VyY2VHcmFwaGljIiB2YWx1ZXM9IjAgMCAwIDAgMSAwIDAgMCAwIDEgMCAwIDAgMCAxIDAgMCAwIDEgMCIvPjwvZmlsdGVyPjwvZGVmcz48cGF0aCBkPSJNNDQuMDM1IDg5LjU5NHMtLjg0NyAyLjU1LTIuMTI1IDMuODI0YTMuODQ0IDMuODQ0IDAgMDEtMi45NzIgMS4yNzcgNDkuOTQ2IDQ5Ljk0NiAwIDAxLTYuMzggMS4yNzRzMi45NzcuNDI2IDYuMzguODUxYzEuMjczIDAgMS4yNzMgMCAyLjEyNC40MjYgMi4xMjYgMCAyLjk3My0xLjI3NyAyLjk3My0xLjI3N3ptMzkuMTEgMHMuODUxIDIuNTUgMi4xMjUgMy44MjRhMy44NTggMy44NTggMCAwMDIuOTc2IDEuMjc3IDQ5LjggNDkuOCAwIDAwNi4zNzUgMS4yNzRzLTIuOTczLjQyNi02LjguODUxYy0xLjI3NCAwLTEuMjc0IDAtMi4xMjYuNDI2LTIuNTUgMC0yLjk3Ni0xLjI3Ny0yLjk3Ni0xLjI3N3ptMCAwIiBmaWxsPSIjZTk2NTRiIi8+PHBhdGggZD0iTTEwOS45MjYgNDcuNTA4YzAgMjUuMzU1LTIwLjU1NSA0NS45MS00NS45MSA0NS45MS0yNS4zNTYgMC00NS45MS0yMC41NTUtNDUuOTEtNDUuOTEgMC0yNS4zNTIgMjAuNTU0LTQ1LjkwNiA0NS45MS00NS45MDYgMjUuMzU1IDAgNDUuOTEgMjAuNTU0IDQ1LjkxIDQ1LjkwNnptMCAwIiBmaWxsPSIjYjZjZmVhIi8+PHBhdGggZD0iTTEwOC4yMjcgNDcuNTA4YzAgMjQuNDE4LTE5Ljc5MyA0NC4yMS00NC4yMTEgNDQuMjEtMjQuNDE0IDAtNDQuMjA3LTE5Ljc5Mi00NC4yMDctNDQuMjFDMTkuODA5IDIzLjA5NCAzOS42MDIgMy4zIDY0LjAxNiAzLjNjMjQuNDE4IDAgNDQuMjEgMTkuNzkzIDQ0LjIxIDQ0LjIwN3ptMCAwIiBmaWxsPSIjZTZmNWY4Ii8+PHBhdGggZD0iTTEwMC4xNDggNDguMzZjMCAxOS45NTYtMTYuMTc1IDM2LjEzMi0zNi4xMzIgMzYuMTMyLTE5Ljk1NCAwLTM2LjEzMy0xNi4xNzYtMzYuMTMzLTM2LjEzMyAwLTE5Ljk1MyAxNi4xOC0zNi4xMzIgMzYuMTMzLTM2LjEzMiAxOS45NTcgMCAzNi4xMzIgMTYuMTggMzYuMTMyIDM2LjEzMnptMCAwIiBmaWxsPSIjZDBlOGYwIi8+PHBhdGggZD0iTTQyLjc2MiA2NS4zNjNzMi45NzYgNDguMDM1IDIuOTc2IDQ4Ljg4N2MwIC40MjIuNDI2IDEuMjczLTEuNzAzIDIuMTI1LTIuMTI1Ljg0OC04LjkyNiAyLjU1LTguOTI2IDIuNTVoMTAuMjAzYzQuNjc2IDAgNC42NzYtMy44MjcgNC42NzYtNC42NzUgMC0uODUyIDEuMjc0LTE5LjEyOSAxLjI3NC0xOS4xMjlzLjQyNSAyMS42OC40MjUgMjIuNTI3YzAgLjg1Mi0uNDI1IDIuMTI1LTMuMzk4IDIuOTc3LTIuMTI1LjQyNi04LjUwNCAxLjctOC41MDQgMS43aDkuNzc4YzUuOTUzIDAgNS45NTMtMy44MjUgNS45NTMtMy44MjVsMS4yNzMtMTkuMTI5cy40MjYgMTkuMTI5LjQyNiAyMS4yNTRjMCAxLjctMS4yNzQgMi45NzctNS45NTMgMy44MjQtMi45NzMuODUyLTYuODAxIDEuNzAzLTYuODAxIDEuNzAzaDExLjA1NWM1LjUyMy0uNDI1IDYuMzc1LTQuMjU0IDYuMzc1LTQuMjU0bDkuMzUxLTQ3LjYwOXptMCAwIiBmaWxsPSIjZWU3OTRiIi8+PHBhdGggZD0iTTg1LjI3IDY1LjM2M3MtMi45NzMgNDguMDM1LTIuOTczIDQ4Ljg4N2MwIC40MjItLjQyNiAxLjI3MyAxLjcgMi4xMjUgMi4xMjQuODQ4IDguOTI1IDIuNTUgOC45MjUgMi41NUg4Mi43MTljLTQuNjc2IDAtNC42NzYtMy44MjctNC42NzYtNC42NzUgMC0uODUyLTEuMjczLTE5LjEyOS0xLjI3My0xOS4xMjlzLS40MjYgMjEuNjgtLjQyNiAyMi41MjdjMCAuODUyLjQyNiAyLjEyNSAzLjQwMiAyLjk3N2w4LjUgMS43SDc4LjQ3Yy01Ljk1IDAtNS45NS0zLjgyNS01Ljk1LTMuODI1bC0xLjI3Ny0xOS4xMjlzLS40MjYgMTkuMTI5LS40MjYgMjEuMjU0YzAgMS43IDEuMjc4IDIuOTc3IDUuOTU0IDMuODI0IDIuOTc2Ljg1MiA2LjggMS43MDMgNi44IDEuNzAzSDcyLjUyYy01LjUyOC0uNDI1LTYuMzgtNC4yNTQtNi4zOC00LjI1NEw1Ni43OSA3NC4yOXptLjQyNS0yMy4zNzljMCAxMS45MDMtOS43NzcgMjEuMjU0LTIxLjI1NCAyMS4yNTQtMTEuNDc2IDAtMjEuMjU0LTkuNzc3LTIxLjI1NC0yMS4yNTQgMC0xMS40NzYgOS43NzgtMjEuMjU0IDIxLjI1NC0yMS4yNTQgMTEuNDc3IDAgMjEuMjU0IDkuMzUyIDIxLjI1NCAyMS4yNTR6bTAgMCIgZmlsbD0iI2VlNzk0YiIvPjxnIGNsaXAtcGF0aD0idXJsKCNhcmdvY2Qtb3JpZ2luYWwtZSkiPjxnIGNsaXAtcGF0aD0idXJsKCNhcmdvY2Qtb3JpZ2luYWwtZikiPjxwYXRoIGQ9Ik0xMDIuMjczIDUzLjQ2YzAgMjAuODk1LTE2LjkzNyAzNy44MzMtMzcuODMyIDM3LjgzMy0yMC44OTQgMC0zNy44MzItMTYuOTM4LTM3LjgzMi0zNy44MzIgMC0yMC44OTUgMTYuOTM4LTM3LjgzMiAzNy44MzItMzcuODMyIDIwLjg5NSAwIDM3LjgzMiAxNi45MzcgMzcuODMyIDM3LjgzMnptMCAwIiBmaWxsPSIjZWU3OTRiIi8+PC9nPjwvZz48dXNlIHhsaW5rOmhyZWY9IiNhcmdvY2Qtb3JpZ2luYWwtZyIgbWFzaz0idXJsKCNhcmdvY2Qtb3JpZ2luYWwtaCkiLz48dXNlIHhsaW5rOmhyZWY9IiNhcmdvY2Qtb3JpZ2luYWwtaSIgbWFzaz0idXJsKCNhcmdvY2Qtb3JpZ2luYWwtaikiLz48cGF0aCBkPSJNNzEuNjY4IDczLjg2M2MwIDcuMjI3LTMuNDAyIDExLjkwNy03LjY1MiAxMS45MDdzLTcuNjUzLTUuNTI4LTcuNjUzLTEyLjc1NGMwIDAgMy40MDMgNi44IDguMDc4IDYuOCA0LjY3NiAwIDcuMjI3LTUuOTUzIDcuMjI3LTUuOTUzem0wIDAiIGZpbGw9IiMwMTAxMDEiLz48cGF0aCBkPSJNNzEuNjY4IDczLjg2M2MwIDQuNjgtMy40MDIgNy4yMjctNy42NTIgNy4yMjdzLTcuMjI3LTMuMzk5LTcuMjI3LTcuNjQ5YzAgMCAzLjQwMiA0LjI1IDguMDc4IDQuMjUgNC42NzYgMCA2LjgwMS0zLjgyOCA2LjgwMS0zLjgyOHptMCAwIiBmaWxsPSIjZmZmIi8+PHBhdGggZD0iTTkyLjA3IDUzLjg4N2MwIDcuMjc3LTUuODk4IDEzLjE3NS0xMy4xNzUgMTMuMTc1LTcuMjc4IDAtMTMuMTgtNS44OTgtMTMuMTgtMTMuMTc1IDAtNy4yNzggNS45MDItMTMuMTggMTMuMTgtMTMuMTggNy4yNzcgMCAxMy4xNzUgNS45MDIgMTMuMTc1IDEzLjE4em0tMjkuNzU0IDBjMCA3LjI3Ny01LjkwMiAxMy4xNzUtMTMuMTggMTMuMTc1LTcuMjc3IDAtMTMuMTc1LTUuODk4LTEzLjE3NS0xMy4xNzUgMC03LjI3OCA1Ljg5OC0xMy4xOCAxMy4xNzYtMTMuMTggNy4yNzcgMCAxMy4xOCA1LjkwMiAxMy4xOCAxMy4xOHptMCAwIiBmaWxsPSIjZTk2NTRiIi8+PHBhdGggZD0iTTg5LjA5OCA1My44ODdjMCA1LjYzMy00LjU3IDEwLjIwMy0xMC4yMDMgMTAuMjAzLTUuNjMzIDAtMTAuMjA0LTQuNTctMTAuMjA0LTEwLjIwMyAwLTUuNjM3IDQuNTctMTAuMjAzIDEwLjIwNC0xMC4yMDMgNS42MzIgMCAxMC4yMDMgNC41NjYgMTAuMjAzIDEwLjIwM3ptLTMwLjYxIDBjMCA1LjYzMy00LjU2NiAxMC4yMDMtMTAuMTk5IDEwLjIwMy01LjYzNyAwLTEwLjIwMy00LjU3LTEwLjIwMy0xMC4yMDNhMTAuMjAxIDEwLjIwMSAwIDAxMTAuMjAzLTEwLjIwM2M1LjYzMyAwIDEwLjIgNC41NjYgMTAuMiAxMC4yMDN6bTAgMCIgZmlsbD0iI2ZmZiIvPjxwYXRoIGQ9Ik01MS4yNjIgNTIuNjFhMi45NzUgMi45NzUgMCAxMS01Ljk1LjAwMyAyLjk3NSAyLjk3NSAwIDAxNS45NS0uMDA0em0zMC42MDkgMGEyLjk3NiAyLjk3NiAwIDExLTUuOTUxLjAwMSAyLjk3NiAyLjk3NiAwIDAxNS45NTEtLjAwMnptMCAwIiBmaWxsPSIjMDEwMTAxIi8+PHBhdGggZD0iTTE3LjI1OCA1OC45ODhhMi4wMDUgMi4wMDUgMCAwMS0yLjEyNS0yLjEyNVYzOS44NmEyLjAwOCAyLjAwOCAwIDAxLjU4Mi0xLjU0MyAyLjAwOCAyLjAwOCAwIDAxMS41NDMtLjU4MiAyLjAwNSAyLjAwNSAwIDAxMi4xMjUgMi4xMjV2MTcuMDA0Yy4wMzUuNTctLjE4IDEuMTMzLS41ODYgMS41NGEyLjAwOCAyLjAwOCAwIDAxLTEuNTQuNTg1em05Mi42NjggMGEyLjAwMyAyLjAwMyAwIDAxLTEuNTQtLjU4NiAyLjAwOCAyLjAwOCAwIDAxLS41ODUtMS41MzlWMzkuODZhMi4wMTEgMi4wMTEgMCAwMS41ODYtMS41NDMgMiAyIDAgMDExLjUzOS0uNTgyIDIgMiAwIDAxMS41MzkuNTgyYy40MS40MDcuNjIuOTcuNTg2IDEuNTQzdjE3LjAwNGExLjk5NCAxLjk5NCAwIDAxLS41ODYgMS41NCAyLjAwMyAyLjAwMyAwIDAxLTEuNTQuNTg1em0wIDAiIGZpbGw9IiNiNmNmZWEiLz48cGF0aCBkPSJNNTEuNjg4IDEzLjUwNGEyLjEyNSAyLjEyNSAwIDExLTQuMjUgMCAyLjEyNSAyLjEyNSAwIDAxNC4yNSAwek0zNC4yNjIgNzAuODlhMS41NTkgMS41NTkgMCAwMS0xLjI3OC0uNDI1Yy01LjEwMS02LjM3NS03LjY1Mi0xNC40NTMtNy42NTItMjIuNTMxYTM3LjkzMyAzNy45MzMgMCAwMTUuMTAyLTE5LjEzIDQxLjY0MSA0MS42NDEgMCAwMTEzLjYwMS0xMy42IDEuODczIDEuODczIDAgMDEyLjEzLjQyNSAxLjg3NCAxLjg3NCAwIDAxLS40MjcgMi4xMjUgMzQuMzA1IDM0LjMwNSAwIDAwLTE3LjQzIDI5Ljc1NCAzMy40ODcgMzMuNDg3IDAgMDA3LjIyNyAyMC44MzJjLjQyNi40MjYuNDI2IDEuNy0uNDI2IDIuMTI1LS40MjUuNDI2LS40MjUuNDI2LS44NDcuNDI2em0wIDAiIGZpbGw9IiNmZmYiLz48dXNlIHhsaW5rOmhyZWY9IiNhcmdvY2Qtb3JpZ2luYWwtayIgbWFzaz0idXJsKCNhcmdvY2Qtb3JpZ2luYWwtbCkiLz48L3N2Zz4=
+" x="108" y="100" width="74" height="74"/>
+  <text x="145" y="192" text-anchor="middle" fill="#3b82f6" font-size="13" font-weight="700">ArgoCD</text>
+  <text x="145" y="209" text-anchor="middle" fill="#64748b" font-size="10">Deploys your apps</text>
+  <text x="145" y="224" text-anchor="middle" fill="#64748b" font-size="10">to Kubernetes</text>
+  <text x="62" y="248" fill="#475569" font-size="9">✦  Watches GitHub for changes</text>
+  <text x="62" y="264" fill="#475569" font-size="9">✦  Syncs &amp; records every deploy</text>
+  <text x="62" y="280" fill="#475569" font-size="9">✦  Exposes raw metrics</text>
 
-  <!-- ══════ ARROW 1 ══════ -->
-  <line x1="253" y1="190" x2="308" y2="190" stroke="#2563eb" stroke-width="2.5"/>
-  <polygon points="308,184 322,190 308,196" fill="#2563eb"/>
-  <text x="287" y="180" text-anchor="middle" fill="#475569" font-size="8.5">scrapes</text>
-  <text x="287" y="205" text-anchor="middle" fill="#334155" font-size="8">every 30s</text>
+  <!-- ARROW 1 -->
+  <line x1="253" y1="193" x2="308" y2="193" stroke="#2563eb" stroke-width="2.5"/>
+  <polygon points="308,187 322,193 308,199" fill="#2563eb"/>
+  <text x="287" y="183" text-anchor="middle" fill="#475569" font-size="8.5">scrapes</text>
+  <text x="287" y="208" text-anchor="middle" fill="#334155" font-size="8">every 30s</text>
 
-  <!-- ══════ BOX 2: Prometheus ══════ -->
+  <!-- BOX 2: Prometheus -->
   <rect x="325" y="88" width="210" height="210" rx="16" fill="#1a0a2e" stroke="#7c3aed" stroke-width="2"/>
-  <use href="#logo-prometheus" transform="translate(430,136)"/>
-  <text x="430" y="178" text-anchor="middle" fill="#a78bfa" font-size="13" font-weight="700">Prometheus</text>
-  <text x="430" y="196" text-anchor="middle" fill="#64748b" font-size="10">Stores &amp; calculates</text>
-  <text x="430" y="211" text-anchor="middle" fill="#64748b" font-size="10">DORA metrics</text>
-  <text x="345" y="237" fill="#475569" font-size="9">✦  Stores time-series data</text>
-  <text x="345" y="253" fill="#475569" font-size="9">✦  Computes deploy frequency</text>
-  <text x="345" y="269" fill="#475569" font-size="9">✦  Calculates failure rates</text>
+  <image href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cGF0aCBmaWxsPSIjZTc1MjI1IiBkPSJNNjQuMTI1LjUxQzk5LjIyOS41MTcgMTI4LjA0NSAyOS4xMzMgMTI4IDYzLjk1MWMtLjA0NSAzNS4zNDItMjguNzQyIDYzLjU2NC02NC42MDggNjMuNTM5QzI4LjMyNSAxMjcuNDY2LS4wMjUgOTguODE4IDAgNjMuNDM0LjAyMyAyOC44MzQgMjguODk4LjUwMyA2NC4xMjUuNTFaTTQ0LjcyIDIyLjc5M2MuODAzIDMuOTYuMDI1IDcuNjU1LTEuMTY3IDExLjI4OS0uODIzIDIuNTE1LTEuOTYyIDQuOTQtMi42NDIgNy40OTItMS4xMjIgNC4yMDMtMi4zOTEgOC40My0yLjg1OSAxMi43MjYtLjY3MSA2LjE4MSAxLjc1OCAxMS42MjUgNS45MTQgMTcuMDRMMjQuODYgNjcuMzE4Yy4wMzMuNjAyIDAgLjgzLjA2NSAxLjAyNCAxLjgxMSA1LjMyIDQuOTk4IDkuODAyIDguNTcgMTQuMDMuMzc3LjQ0NiAxLjIzNy42NzQgMS44NzcuNjc0IDE5LjA1LjAzOCAzOC4xMDEuMDM0IDU3LjE1Mi4wMDkuNTkgMCAxLjM4MS0uMTEgMS43NDEtLjQ5IDQuMDg0LTQuMjk0IDcuMjA1LTkuMTg1IDkuMTYtMTUuMzQybC0yMC4yMjggMy45NjJjMS4zMzYtMi42MTggMi44NTUtNC45MTYgMy43MzMtNy40NDMgMi45OTQtOC42NDMgMS43NTItMTYuOTk4LTIuNTQ1LTI0Ljg4LTMuNDQ5LTYuMzI0LTYuNjMxLTEyLjYyLTQuOTEtMjAuMjQzLTMuNjQyIDMuNi01LjA0MyA4LjE3OS01LjkzMiAxMi44OTgtLjg3MiA0LjY1LTEuMzg5IDkuMzY0LTIuMDY1IDE0LjA4My0uMDk4LS4xNDMtLjIyLS4yNS0uMjQyLS4zNzNhMTMuOTY0IDEzLjk2NCAwIDAgMS0uMTc2LTEuNDljLS40MTMtNy43MjYtMS45Mi0xNS4xNy01LjEwNi0yMi4yOC0xLjg3My00LjE4Mi0zLjk0MS04LjQ2Mi0yLjAwOC0xMy40NTYtMS4zMDcuNjkzLTIuNDkgMS4zNzctMy4zMzggMi4zNTYtMi41MjcgMi45Mi0zLjU3MyA2LjQyOC0zLjg0MiAxMC4yNjktLjIzMSAzLjI4Mi0uNTQ2IDYuNTc5LTEuMTU2IDkuODA2LS42NCAzLjM5Mi0xLjY1IDYuNzE0LTMuOTMyIDkuODMxLS45MTgtNi42NTYtMS4wMi0xMy4yNDQtNi45NTYtMTcuNDdaTTkzLjg0MiA4OC44OEgzNC4wODh2MTAuMzhoNTkuNzU0Wm0tNDcuOTA0IDE1Ljc0NmMtLjA0OSA4LjY0MiA4Ljc1MyAxNS4wODEgMTkuNjMzIDE0LjYxNCA5LjAyLS4zODkgMTYuOTk5LTcuNDg0IDE2LjMxNS0xNC42MTR6bTAgMCIvPjwvc3ZnPg==
+" x="393" y="100" width="74" height="74"/>
+  <text x="430" y="192" text-anchor="middle" fill="#a78bfa" font-size="13" font-weight="700">Prometheus</text>
+  <text x="430" y="209" text-anchor="middle" fill="#64748b" font-size="10">Stores &amp; calculates</text>
+  <text x="430" y="224" text-anchor="middle" fill="#64748b" font-size="10">DORA metrics</text>
+  <text x="345" y="248" fill="#475569" font-size="9">✦  Stores time-series data</text>
+  <text x="345" y="264" fill="#475569" font-size="9">✦  Computes deploy frequency</text>
+  <text x="345" y="280" fill="#475569" font-size="9">✦  Calculates failure rates</text>
 
-  <!-- ══════ ARROW 2 ══════ -->
-  <line x1="538" y1="190" x2="593" y2="190" stroke="#7c3aed" stroke-width="2.5"/>
-  <polygon points="593,184 607,190 593,196" fill="#7c3aed"/>
-  <text x="572" y="180" text-anchor="middle" fill="#475569" font-size="8.5">queries</text>
-  <text x="572" y="205" text-anchor="middle" fill="#334155" font-size="8">on demand</text>
+  <!-- ARROW 2 -->
+  <line x1="538" y1="193" x2="593" y2="193" stroke="#7c3aed" stroke-width="2.5"/>
+  <polygon points="593,187 607,193 593,199" fill="#7c3aed"/>
+  <text x="572" y="183" text-anchor="middle" fill="#475569" font-size="8.5">queries</text>
+  <text x="572" y="208" text-anchor="middle" fill="#334155" font-size="8">on demand</text>
 
-  <!-- ══════ BOX 3: Grafana ══════ -->
+  <!-- BOX 3: Grafana -->
   <rect x="610" y="88" width="210" height="210" rx="16" fill="#0f2318" stroke="#16a34a" stroke-width="2"/>
-  <use href="#logo-grafana" transform="translate(715,136)"/>
-  <text x="715" y="178" text-anchor="middle" fill="#4ade80" font-size="13" font-weight="700">Grafana</text>
-  <text x="715" y="196" text-anchor="middle" fill="#64748b" font-size="10">Shows you the</text>
-  <text x="715" y="211" text-anchor="middle" fill="#64748b" font-size="10">DORA dashboard</text>
-  <text x="630" y="237" fill="#475569" font-size="9">✦  Deploy frequency chart</text>
-  <text x="630" y="253" fill="#475569" font-size="9">✦  Change failure rate</text>
-  <text x="630" y="269" fill="#475569" font-size="9">✦  Lead time &amp; app health</text>
+  <image href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48bGluZWFyR3JhZGllbnQgaWQ9ImEiIHgxPSI0NS44NDIiIHgyPSI0NS44NDIiIHkxPSI4OS41NyIgeTI9IjguODAyIiBncmFkaWVudFRyYW5zZm9ybT0idHJhbnNsYXRlKC0yLjQwNSAyNy4zMTYpIHNjYWxlKDEuNDQ2MykiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNmY2VlMWYiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNmMTViMmEiLz48L2xpbmVhckdyYWRpZW50PjxwYXRoIGZpbGw9InVybCgjYSkiIGQ9Ik02OS4xNjIgMGMtOS45MSA2LjQtMTEuNzcgMTQuODY1LTExLjc3IDE0Ljg2NXMuMDAyLjIwNi0uMTAxLjQxMmMtLjYyLjEwNC0xLjAzMy4zMS0xLjU0OS40MTMtLjcyMi4yMDYtMS40NDUuNDEzLTIuMTY4LjgyNmwtMi4xNjguOTNjLTEuNDQ1LjcyMi0yLjg5IDEuMzQxLTQuMzM2IDIuMTY3LTEuMzQyLjgyNi0yLjY4MyAxLjU0OC00LjAyNSAyLjQ3N2ExLjI2NiAxLjI2NiAwIDAgMS0uMzA5LS4yMDVjLTEzLjMxNi01LjE2MS0yNS4wODQgMS4wMzEtMjUuMDg0IDEuMDMxLTEuMDMyIDE0LjI0NSA1LjM2NyAyMy4wMiA2LjYwNiAyNC42NzItLjMxLjkyOS0uNjIgMS43NTQtLjkzIDIuNThhNTIuOTczIDUyLjk3MyAwIDAgMC0yLjE2NiA5LjkxYy0uMTAzLjQxMy0uMTA0IDEuMDMzLS4yMDcgMS40NDVDOC42NzEgNjcuNjEzIDUuMDYgODAuMTAzIDUuMDYgODAuMTAzYzEwLjIxOSAxMS43NjggMjIuMTkzIDEyLjQ5IDIyLjE5MyAxMi40OSAxLjQ0NSAyLjY4NSAzLjMwMiA1LjM2OSA1LjI2NCA3Ljc0My44MjUgMS4wMzIgMS43NTYgMS45NiAyLjU4MiAyLjk5Mi0zLjcxNiAxMC42MzIuNjE5IDE5LjYxMy42MTkgMTkuNjEzIDExLjQ1OC40MTMgMTguOTkyLTQuOTU1IDIwLjU0LTYuMjk3IDEuMTM2LjMxIDIuMjcyLjcyNCAzLjQwNyAxLjAzNGE0Ny4yNSA0Ny4yNSAwIDAgMCAxMC42MzMgMS41NDloNC42NDRDODAuMzEgMTI2Ljk2OSA4OS44MDcgMTI4IDg5LjgwNyAxMjhjNi43MS03LjEyMyA3LjEyMy0xNC4wMzggNy4xMjMtMTUuNjl2LS42MmMxLjM0Mi0xLjAzMyAyLjY4My0yLjA2NCA0LjEyOS0zLjIgMi42ODQtMi4zNzQgNC45NTUtNS4yNjQgNy4wMi04LjE1NC4yMDYtLjIwNy4zMDktLjYyLjYxOC0uODI2IDcuNjM5LjQxMyAxMi45MDMtNC43NDggMTIuOTAzLTQuNzQ4LTEuMjQtNy45NDktNS43OC0xMS43NjgtNi43MS0xMi40OWwtLjEwMy0uMTA0LS4xMDMtLjEwNC0uMTA0LS4xMDNjMC0uNDEzLjEwNC0uOTMuMTA0LTEuNDQ1LjEwMy0uOTMuMTAzLTEuNzU1LjEwMy0yLjU4di0zLjQwN2MwLS4yMDYgMC0uNDEzLS4xMDMtLjcyMmwtLjEwNC0uNzIzLS4xMDMtLjcyM2MtLjEwNC0uOTI5LS4zMS0xLjc1NC0uNDEzLTIuNTgtLjgyNS0zLjQwNi0yLjE2Ni02LjcxLTMuODE4LTkuNDk4LTEuODU4LTIuOTkzLTQuMDI2LTUuNDcxLTYuNTA0LTcuNzQyLTIuNDc3LTIuMTY4LTUuMjY0LTQuMDI1LTguMTU0LTUuMjY0LTIuOTk0LTEuMzQyLTUuODg0LTIuMTY3LTguOTgtMi40NzYtMS40NDYtLjIwNy0zLjA5OC0uMjA3LTQuNTQ0LS4yMDdINzkuNjljLS44MjUuMTAzLTEuNTQ2LjIwNS0yLjI3LjMwOC0zLjA5Ni42Mi01Ljg4MyAxLjc1Ni04LjM2IDMuMjAxLTIuNDc4IDEuNDQ2LTQuNjQ2IDMuNDA3LTYuNTA0IDUuNTc1LTEuODU4IDIuMTY3LTMuMiA0LjQzOC00LjEzIDYuOTE2YTIzLjMxMyAyMy4zMTMgMCAwIDAtMS41NDggNy40MzF2Mi42ODRjMCAuMzEgMCAuNjIuMTA0LjkzLjEwMyAxLjIzOC4zMSAyLjM3NC43MjIgMy41MS43MjMgMi4yNyAxLjc1NiA0LjMzNCAzLjA5OCA2LjA5YTE5Ljk3MyAxOS45NzMgMCAwIDAgNC41NCA0LjMzNWMxLjc1NiAxLjEzNiAzLjQwOCAxLjk2IDUuMjY2IDIuNDc3IDEuODU4LjUxNiAzLjUwOS44MjYgNS4xNi43MjJoMi4zNzZjLjIwNiAwIC40MTItLjEwMS42MTktLjEwMS4yMDYgMCAuMzEtLjEwNC42MTktLjEwNC4zMS0uMTAzLjgyNS0uMjA3IDEuMTM1LS4zMS43MjItLjIwNyAxLjM0Mi0uNjIgMi4wNjQtLjgyNi43MjMtLjMxIDEuMjQtLjcyMiAxLjc1Ni0xLjAzMi4xMDMtLjEwMy4zMDktLjIwNy40MTItLjMxLjYyLS40MTMuNzIzLTEuMjM4LjIwNy0xLjg1OC0uNDEzLS40MTMtMS4xMzYtLjYyLTEuNzU2LS4zMS0uMTAzLjEwMy0uMjA1LjEwNC0uNDEyLjIwNy0uNDEzLjIwNi0xLjAzMi40MTMtMS40NDUuNjE5LS42Mi4xMDMtMS4xMzUuMzEtMS43NTQuNDE0LS4zMSAwLS42Mi4xMDItLjkzLjEwMmgtMi41OGMtLjEwMyAwLS4zMS4wMDEtLjQxNC0uMTAyLTEuMjM5LS4yMDYtMi41OC0uNjItMy44MTgtMS4xMzctMS4yMzktLjYxOS0yLjQ3OC0xLjM0LTMuNTEtMi4zNzNhMTUuODk0IDE1Ljg5NCAwIDAgMS0yLjg5LTMuNTFjLS44MjYtMS4zNDEtMS4yNC0yLjg5LTEuNDQ2LTQuMzM1LS4xMDMtLjgyNi0uMjA3LTEuNTUtLjEwMy0yLjM3NXYtMS4yMzljMC0uNDEzLjEwMy0uODI1LjIwNy0xLjIzOC42MTktMy40MDYgMi4yNy02LjcxIDQuODUxLTkuMTg3LjcyMy0uNzIzIDEuMzQyLTEuMjM4IDIuMTY4LTEuNzU0LjgyNi0uNjIgMS41NDctMS4wMzIgMi4zNzMtMS4zNDIuODI2LS4zMSAxLjc1Ni0uNzIzIDIuNTgyLS45My45My0uMjA2IDEuODU4LS40MTQgMi42ODQtLjQxNC40MTMgMCAuOTI5LS4xMDEgMS4zNDItLjEwMWgxLjIzOGMxLjAzMi4xMDMgMi4wNjUuMjA1IDIuOTk0LjQxMiAxLjk2MS40MTMgMy44MiAxLjEzNSA1LjY3OCAyLjE2OCAzLjYxMyAyLjA2NCA2LjcwOCA1LjE2IDguNTY2IDguODc3LjkzIDEuODU4IDEuNTQ4IDMuODIgMS45NjEgNS45ODguMTAzLjYyLjEwNCAxLjAzLjIwNyAxLjU0N3YyLjc4N2MwIC42Mi0uMTAzIDEuMTM2LS4xMDMgMS43NTYtLjEwNC42Mi0uMTAyIDEuMTM0LS4yMDUgMS43NTQtLjEwNC42MTktLjIwOCAxLjEzNi0uMzExIDEuNzU1LS4yMDYgMS4xMzYtLjcyMiAyLjE2OC0xLjAzMSAzLjMwMy0uODI2IDIuMTY4LTEuOTYzIDQuMjMyLTMuMzA1IDUuOTg2LTIuNjg0IDMuNzE3LTYuNTAyIDYuODE1LTEwLjYzIDguNzc2LTIuMTY5LjkyOS00LjMzNyAxLjc1NS02LjYwOCAyLjA2NGExOS4wMDMgMTkuMDAzIDAgMCAxLTMuNDA3LjMwOWgtMS43NTVjLS42MiAwLTEuMjM4LjAwMi0xLjg1OC0uMTAyLTIuNDc3LS4yMDYtNC44NS0uNzI0LTcuMjI0LTEuMzQzLTIuMzc1LS43MjMtNC42NDctMS41NDgtNi44MTUtMi42ODQtNC4zMzUtMi4yNy04LjE1My01LjU3My0xMS4yNS05LjI4OS0xLjQ0NS0xLjk2MS0yLjg5Mi00LjAyNy00LjAyNy02LjA5Mi0xLjEzNi0yLjA2NC0xLjk2MS00LjQzOC0yLjU4LTYuNzA5LS43MjMtMi4yNy0xLjAzMi00LjY0NS0xLjEzNS03LjAydi0zLjYxM2MwLTEuMTM1LjEwMi0yLjM3Mi4zMDktMy42MS4xMDMtMS4yNC4zMDktMi4zNzYuNjE5LTMuNjE0LjIwNi0xLjIzOS42Mi0yLjM3NS45My0zLjYxNC43MjItMi4zNzQgMS40NDQtNC42NDQgMi40NzYtNi44MTIgMi4wNjQtNC4zMzUgNC42NDUtOC4xNTUgNy43NDItMTEuMjUyYTI0Ljg2IDI0Ljg2IDAgMCAxIDIuNDc5LTIuMTY4Yy4zMS0uMzEgMS4xMzUtMS4wMzMgMi4wNjQtMS41NDlzMS44NTgtMS4xMzYgMi44OS0xLjU0OWMuNDE0LS4yMDYuOTMtLjQxMyAxLjQ0Ni0uNzIyLjIwNi0uMTAzLjQxMS0uMjA2LjgyNC0uMzA5LjIwNy0uMTAzLjQxNC0uMjA3LjgyNi0uMzEgMS4wMzMtLjQxMyAyLjA2Ni0uODI1IDMuMDk4LTEuMTM1LjIwNy0uMTAzLjYyLS4xMDQuODI2LS4yMDcuMjA3LS4xMDMuNjE4LS4xMDIuODI0LS4yMDUuNjItLjEwMyAxLjAzMy0uMjA4IDEuNTUtLjQxNC4yMDYtLjEwNC42MTktLjEwNC44MjUtLjIwNy4yMDcgMCAuNjItLjEwMi44MjctLjEwMi4yMDYgMCAuNjItLjEwMy44MjYtLjEwM2wuNDEyLS4xMDQuNDEyLS4xMDNjLjIwNiAwIC42Mi0uMTA0LjgyNi0uMTA0LjMxIDAgLjYyLS4xMDQuOTMtLjEwNC4yMDYgMCAuNzIxLS4xMDEuOTI4LS4xMDEuMjA2IDAgLjMxMSAwIC42Mi0uMTA0aC43MjNjLjMxIDAgLjYxOCAwIC45MjgtLjEwM2g0LjY0N2MyLjA2NC4xMDMgNC4xMjguMzEgNS45ODYuNzIzIDMuODIuNzIyIDcuNjM4IDEuOTYxIDEwLjk0MSAzLjYxMyAzLjMwNCAxLjU0OCA2LjQgMy42MTEgOC44NzcgNS43OC4xMDQuMTAyLjMxMS4yMDcuNDE0LjQxMy4xMDQuMTAzLjMxLjIwNi40MTIuNDEyLjMxLjIwNy42Mi42Mi45My44MjYuMzEuMjA3LjYyLjYyLjkzLjgyNy4yMDYuMzEuNjE4LjYxOC44MjQuOTI3IDEuMTM2IDEuMTM2IDIuMTY5IDIuMzc1IDMuMDk4IDMuNTFhNDEuNDIyIDQxLjQyMiAwIDAgMSA0LjQ0IDcuMDJjLjEwMi4xMDMuMS4yMDcuMjA0LjQxNC4xMDMuMTAzLjEwNC4yMDUuMjA3LjQxMi4xMDMuMjA2LjIwNi42Mi40MTIuODI2LjEwNC4yMDYuMjA4LjYyLjMxLjgyNi4xMDQuMjA3LjIwOC42Mi4zMTEuODI2LjQxMyAxLjAzMy44MjYgMi4wNjQgMS4xMzUgMy4wOTYuNjIgMS41NDguOTI5IDIuOTkzIDEuMjM5IDQuMTMuMTAzLjQxMi42Mi44MjUgMS4wMzMuODI1LjYxOSAwIC45MjctLjQxNC45MjctMS4wMzMtLjMxLTEuNzU1LS4zMDgtMy4xOTgtLjQxMi00Ljk1My0uMjA2LTIuMTY4LS42MTktNC42NDctMS4yMzgtNy40MzQtLjYyLTIuNzg3LTEuODYtNS42NzctMy4zMDUtOC44NzctMS41NDgtMy4wOTYtMy41MDktNi40LTYuMDktOS4zOTQtMS4wMzItMS4yMzktMi4xNjctMi4zNzMtMy4zMDItMy42MTIgMS44NTgtNy4xMjItMi4xNjgtMTMuNDItMi4xNjgtMTMuNDItNi45MTYtLjQxMi0xMS4yNTMgMi4xNjgtMTIuODAxIDMuMzAzLS4yMDYtLjEwMy0uNjE4LS4yMDUtLjgyNC0uMzA4LTEuMTM2LS40MTMtMi4zNzUtLjkzLTMuNjEzLTEuMzQyLTEuMjQtLjMxLTIuNDc4LS44MjctMy43MTctMS4wMzMtMS4yMzktLjMxLTIuNTgtLjYyLTQuMDI2LS44MjctLjIwNiAwLS40MTMtLjEwMy0uNzIyLS4xMDNDNzcuODMzIDQuMTI4IDY5LjE2MiAwIDY5LjE2MiAweiIvPjwvc3ZnPg==
+" x="678" y="100" width="74" height="74"/>
+  <text x="715" y="192" text-anchor="middle" fill="#4ade80" font-size="13" font-weight="700">Grafana</text>
+  <text x="715" y="209" text-anchor="middle" fill="#64748b" font-size="10">Shows you the</text>
+  <text x="715" y="224" text-anchor="middle" fill="#64748b" font-size="10">DORA dashboard</text>
+  <text x="630" y="248" fill="#475569" font-size="9">✦  Deploy frequency chart</text>
+  <text x="630" y="264" fill="#475569" font-size="9">✦  Change failure rate</text>
+  <text x="630" y="280" fill="#475569" font-size="9">✦  Lead time &amp; app health</text>
 
-  <!-- ══════ DORA METRICS STRIP ══════ -->
+  <!-- METRICS STRIP -->
   <rect x="40" y="318" width="780" height="56" rx="10" fill="#0d1117" stroke="#1e293b" stroke-width="1"/>
   <text x="430" y="338" text-anchor="middle" fill="#475569" font-size="9" font-weight="600">WHAT YOU SEE ON THE DASHBOARD</text>
   <rect x="58" y="346" width="170" height="20" rx="5" fill="#14532d"/>
