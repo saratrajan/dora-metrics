@@ -1,0 +1,166 @@
+<svg viewBox="0 0 960 560" xmlns="http://www.w3.org/2000/svg" role="img" font-family="'Segoe UI', system-ui, sans-serif">
+  <title>DORA Metrics Data Flow</title>
+  <desc>Architecture diagram showing how ArgoCD metrics flow through Prometheus recording rules to a Grafana dashboard displaying DORA metrics.</desc>
+
+  <!-- Background -->
+  <rect width="960" height="560" fill="#0f1117"/>
+
+  <!-- Title -->
+  <text x="480" y="38" text-anchor="middle" fill="#e2e8f0" font-size="18" font-weight="700" letter-spacing="0.5">DORA Metrics — Observability Pipeline</text>
+  <text x="480" y="58" text-anchor="middle" fill="#64748b" font-size="11">ArgoCD  →  Prometheus  →  Grafana</text>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- LAYER 1: ArgoCD Controllers -->
+  <!-- ══════════════════════════════════════════════ -->
+  <rect x="30" y="78" width="250" height="338" rx="12" fill="#0d1f35" stroke="#1e40af" stroke-width="1.5"/>
+  <text x="155" y="101" text-anchor="middle" fill="#3b82f6" font-size="11" font-weight="700" letter-spacing="1">ARGOCD</text>
+  <text x="155" y="116" text-anchor="middle" fill="#475569" font-size="9.5">kind-travel-lab cluster</text>
+
+  <!-- App Controller -->
+  <rect x="46" y="125" width="218" height="76" rx="8" fill="#1e3a5f" stroke="#2563eb" stroke-width="1"/>
+  <text x="58" y="144" fill="#93c5fd" font-size="10" font-weight="600">⚙  Application Controller</text>
+  <text x="58" y="160" fill="#64748b" font-size="8.5">argocd_app_sync_total</text>
+  <text x="58" y="174" fill="#64748b" font-size="8.5">argocd_app_info</text>
+  <text x="58" y="191" fill="#334155" font-size="8">:8082/metrics</text>
+
+  <!-- Repo Server -->
+  <rect x="46" y="211" width="218" height="76" rx="8" fill="#1e3a5f" stroke="#2563eb" stroke-width="1"/>
+  <text x="58" y="230" fill="#93c5fd" font-size="10" font-weight="600">📦  Repo Server</text>
+  <text x="58" y="247" fill="#64748b" font-size="8.5">argocd_app_reconcile_bucket</text>
+  <text x="58" y="261" fill="#64748b" font-size="8.5">argocd_git_fetch_duration</text>
+  <text x="58" y="277" fill="#334155" font-size="8">:8084/metrics</text>
+
+  <!-- API Server -->
+  <rect x="46" y="297" width="218" height="76" rx="8" fill="#1e3a5f" stroke="#2563eb" stroke-width="1"/>
+  <text x="58" y="316" fill="#93c5fd" font-size="10" font-weight="600">🌐  API Server</text>
+  <text x="58" y="333" fill="#64748b" font-size="8.5">grpc_server_handled_total</text>
+  <text x="58" y="347" fill="#64748b" font-size="8.5">argocd_redis_request_total</text>
+  <text x="58" y="363" fill="#334155" font-size="8">:8083/metrics</text>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- LAYER 2: ServiceMonitor -->
+  <!-- ══════════════════════════════════════════════ -->
+  <line x1="280" y1="256" x2="332" y2="256" stroke="#1d4ed8" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <polygon points="332,252 340,256 332,260" fill="#1d4ed8"/>
+  <text x="306" y="248" text-anchor="middle" fill="#475569" font-size="8">scrape</text>
+
+  <rect x="340" y="230" width="118" height="52" rx="8" fill="#172033" stroke="#1d4ed8" stroke-width="1" stroke-dasharray="4,2"/>
+  <text x="399" y="251" text-anchor="middle" fill="#60a5fa" font-size="9" font-weight="600">ServiceMonitor</text>
+  <text x="399" y="265" text-anchor="middle" fill="#475569" font-size="8">argocd namespace</text>
+  <text x="399" y="277" text-anchor="middle" fill="#334155" font-size="7.5">30s interval</text>
+
+  <line x1="458" y1="256" x2="497" y2="256" stroke="#1d4ed8" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <polygon points="497,252 505,256 497,260" fill="#1d4ed8"/>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- LAYER 3: Prometheus -->
+  <!-- ══════════════════════════════════════════════ -->
+  <rect x="505" y="78" width="236" height="338" rx="12" fill="#1a0a2e" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="623" y="101" text-anchor="middle" fill="#a78bfa" font-size="11" font-weight="700" letter-spacing="1">PROMETHEUS</text>
+  <text x="623" y="116" text-anchor="middle" fill="#475569" font-size="9.5">kube-prometheus-stack</text>
+
+  <!-- TSDB -->
+  <rect x="520" y="125" width="206" height="58" rx="8" fill="#2d1b5e" stroke="#7c3aed" stroke-width="1"/>
+  <text x="623" y="147" text-anchor="middle" fill="#c4b5fd" font-size="10" font-weight="600">🗄  TSDB</text>
+  <text x="623" y="163" text-anchor="middle" fill="#64748b" font-size="8.5">Raw metric store · 15-day retention</text>
+  <text x="623" y="176" text-anchor="middle" fill="#334155" font-size="7.5">:9090</text>
+
+  <!-- PrometheusRule card -->
+  <rect x="520" y="194" width="206" height="198" rx="8" fill="#2d1b5e" stroke="#7c3aed" stroke-width="1"/>
+  <text x="623" y="214" text-anchor="middle" fill="#c4b5fd" font-size="10" font-weight="600">📐  PrometheusRule</text>
+  <text x="623" y="228" text-anchor="middle" fill="#475569" font-size="8">dora-metrics · eval every 1m</text>
+
+  <rect x="528" y="235" width="190" height="36" rx="5" fill="#1a0a2e"/>
+  <text x="538" y="249" fill="#6ee7b7" font-size="8" font-weight="600">dora:deployment_frequency:daily</text>
+  <text x="538" y="263" fill="#475569" font-size="7.5">increase(argocd_app_sync_total[24h])</text>
+
+  <rect x="528" y="277" width="190" height="36" rx="5" fill="#1a0a2e"/>
+  <text x="538" y="291" fill="#fbbf24" font-size="8" font-weight="600">dora:change_failure_rate:7d</text>
+  <text x="538" y="305" fill="#475569" font-size="7.5">failed syncs / all syncs (7d)</text>
+
+  <rect x="528" y="319" width="190" height="36" rx="5" fill="#1a0a2e"/>
+  <text x="538" y="333" fill="#f87171" font-size="8" font-weight="600">dora:lead_time_p95:1h</text>
+  <text x="538" y="347" fill="#475569" font-size="7.5">histogram_quantile(0.95, reconcile)</text>
+
+  <rect x="528" y="361" width="190" height="26" rx="5" fill="#1a0a2e"/>
+  <text x="538" y="378" fill="#a78bfa" font-size="8" font-weight="600">dora:mttr_proxy:1h</text>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- Arrow Prometheus → Grafana -->
+  <!-- ══════════════════════════════════════════════ -->
+  <line x1="741" y1="256" x2="779" y2="256" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <polygon points="779,252 787,256 779,260" fill="#7c3aed"/>
+  <text x="762" y="248" text-anchor="middle" fill="#475569" font-size="8">PromQL</text>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- LAYER 4: Grafana -->
+  <!-- ══════════════════════════════════════════════ -->
+  <rect x="787" y="78" width="148" height="338" rx="12" fill="#0f2318" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="861" y="101" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="700" letter-spacing="1">GRAFANA</text>
+  <text x="861" y="116" text-anchor="middle" fill="#475569" font-size="9.5">port 3000</text>
+
+  <rect x="800" y="125" width="122" height="44" rx="6" fill="#14532d" stroke="#16a34a" stroke-width="0.8"/>
+  <text x="861" y="143" text-anchor="middle" fill="#6ee7b7" font-size="9" font-weight="600">Deploy Freq</text>
+  <text x="861" y="158" text-anchor="middle" fill="#475569" font-size="7.5">timeseries</text>
+
+  <rect x="800" y="179" width="122" height="44" rx="6" fill="#78350f" stroke="#d97706" stroke-width="0.8"/>
+  <text x="861" y="197" text-anchor="middle" fill="#fde68a" font-size="9" font-weight="600">Failure Rate</text>
+  <text x="861" y="212" text-anchor="middle" fill="#475569" font-size="7.5">timeseries</text>
+
+  <rect x="800" y="233" width="122" height="44" rx="6" fill="#1e3a5f" stroke="#3b82f6" stroke-width="0.8"/>
+  <text x="861" y="251" text-anchor="middle" fill="#93c5fd" font-size="9" font-weight="600">Lead Time</text>
+  <text x="861" y="266" text-anchor="middle" fill="#475569" font-size="7.5">stat / series</text>
+
+  <rect x="800" y="287" width="122" height="44" rx="6" fill="#2d1b5e" stroke="#7c3aed" stroke-width="0.8"/>
+  <text x="861" y="305" text-anchor="middle" fill="#c4b5fd" font-size="9" font-weight="600">App Health</text>
+  <text x="861" y="320" text-anchor="middle" fill="#475569" font-size="7.5">pie / stat</text>
+
+  <rect x="800" y="341" width="122" height="44" rx="6" fill="#172033" stroke="#475569" stroke-width="0.8"/>
+  <text x="861" y="359" text-anchor="middle" fill="#94a3b8" font-size="9" font-weight="600">All Services</text>
+  <text x="861" y="374" text-anchor="middle" fill="#475569" font-size="7.5">table</text>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- Legend row -->
+  <!-- ══════════════════════════════════════════════ -->
+
+  <!-- Data Flow legend -->
+  <rect x="30" y="438" width="290" height="96" rx="8" fill="#0d1117" stroke="#1e293b" stroke-width="1"/>
+  <text x="46" y="458" fill="#64748b" font-size="9.5" font-weight="600">DATA FLOW</text>
+  <line x1="46" y1="473" x2="78" y2="473" stroke="#1d4ed8" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <polygon points="78,469 86,473 78,477" fill="#1d4ed8"/>
+  <text x="94" y="477" fill="#94a3b8" font-size="9">Prometheus scrape (pull model, 30s)</text>
+  <line x1="46" y1="493" x2="78" y2="493" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <polygon points="78,489 86,493 78,497" fill="#7c3aed"/>
+  <text x="94" y="497" fill="#94a3b8" font-size="9">PromQL query (on-demand)</text>
+
+  <!-- DORA Metrics legend — widened to 610px, text shortened -->
+  <rect x="340" y="438" width="595" height="96" rx="8" fill="#0d1117" stroke="#1e293b" stroke-width="1"/>
+  <text x="356" y="458" fill="#64748b" font-size="9.5" font-weight="600">DORA METRICS</text>
+
+  <rect x="356" y="466" width="8" height="8" rx="2" fill="#6ee7b7"/>
+  <text x="370" y="475" fill="#94a3b8" font-size="9">Deployment Frequency</text>
+  <text x="490" y="475" fill="#475569" font-size="8.5">24h sync count</text>
+
+  <rect x="356" y="483" width="8" height="8" rx="2" fill="#fbbf24"/>
+  <text x="370" y="492" fill="#94a3b8" font-size="9">Change Failure Rate</text>
+  <text x="490" y="492" fill="#475569" font-size="8.5">7-day window</text>
+
+  <rect x="356" y="500" width="8" height="8" rx="2" fill="#f87171"/>
+  <text x="370" y="509" fill="#94a3b8" font-size="9">Lead Time P95</text>
+  <text x="490" y="509" fill="#475569" font-size="8.5">reconcile duration proxy</text>
+
+  <rect x="356" y="517" width="8" height="8" rx="2" fill="#a78bfa"/>
+  <text x="370" y="526" fill="#94a3b8" font-size="9">MTTR Proxy</text>
+  <text x="490" y="526" fill="#475569" font-size="8.5">unhealthy app duration</text>
+
+  <!-- Separator lines -->
+  <line x1="280" y1="86" x2="280" y2="408" stroke="#1e293b" stroke-width="0.5"/>
+  <line x1="505" y1="86" x2="505" y2="408" stroke="#1e293b" stroke-width="0.5"/>
+  <line x1="787" y1="86" x2="787" y2="408" stroke="#1e293b" stroke-width="0.5"/>
+
+  <!-- Layer labels -->
+  <text x="155" y="422" text-anchor="middle" fill="#1d4ed8" font-size="8.5" font-weight="600">① SOURCE</text>
+  <text x="399" y="422" text-anchor="middle" fill="#1d4ed8" font-size="8.5" font-weight="600">② COLLECT</text>
+  <text x="623" y="422" text-anchor="middle" fill="#7c3aed" font-size="8.5" font-weight="600">③ COMPUTE</text>
+  <text x="861" y="422" text-anchor="middle" fill="#16a34a" font-size="8.5" font-weight="600">④ VISUALISE</text>
+</svg>
